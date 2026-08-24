@@ -12,8 +12,12 @@
         <div class="text-muted small">Sincronizar todos los Pokémon desde PokeAPI</div>
     </a>
     <a href="{{ url_for('admin.sets') }}" class="list-group-item list-group-item-action">
-        <strong>Sets y Cartas</strong>
+        <strong>Sets y Cartas (inglés)</strong>
         <div class="text-muted small">Sincronizar la lista de sets y las cartas de cada set, uno a uno</div>
+    </a>
+    <a href="{{ url_for('admin.langs') }}" class="list-group-item list-group-item-action">
+        <strong>Cartas por idioma</strong>
+        <div class="text-muted small">Español, japonés, coreano, chino simplificado — catálogo independiente por idioma</div>
     </a>
 </div>
 {% endblock %}

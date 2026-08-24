@@ -82,11 +82,13 @@ Todas las sincronizaciones siguen el mismo patrón: al pulsar el botón se dispa
 |---------------|---|
 | `/`           | Página de inicio |
 | `/pokedex/`   | Botón "Sincronizar Pokédex" — sincroniza todos los Pokémon desde PokeAPI (~5s). |
-| `/admin/`     | Hub de administración, enlaza a las secciones de sincronización (Pokédex, Sets y Cartas). |
-| `/admin/sets/`| Botón "Sincronizar lista de sets" (174 sets, sin cartas). Tabla con todos los sets: **verde** ("Actualizado", con fecha) si ya se sincronizaron sus cartas, **rojo** ("Sin actualizar") si no. Desplegable + botón "Actualizar" para sincronizar las cartas de **un solo set** a la vez — así no se satura la API con miles de peticiones de golpe (antes había un botón que traía las ~20.479 cartas de una sentada; se quitó por ser demasiado lento e inestable). Precios excluidos por ahora (ver README de TCGAPI). |
+| `/admin/`     | Hub de administración, enlaza a las secciones de sincronización (Pokédex, Sets y Cartas en inglés, Cartas por idioma). |
+| `/admin/sets/`| Sets y cartas **en inglés** (pokemontcg.io). Botón "Sincronizar lista de sets" (174 sets, sin cartas). Tabla con todos los sets: **verde** ("Actualizado", con fecha) si ya se sincronizaron sus cartas, **rojo** ("Sin actualizar") si no. Desplegable + botón "Actualizar" para sincronizar las cartas de **un solo set** a la vez — así no se satura la API con miles de peticiones de golpe (antes había un botón que traía las ~20.479 cartas de una sentada; se quitó por ser demasiado lento e inestable). Precios excluidos por ahora (ver README de TCGAPI). |
+| `/admin/langs/` | Selector de idioma: español, japonés, coreano, chino simplificado. |
+| `/admin/langs/<lang>/sets/` | Mismo patrón que `/admin/sets/` (sync de lista de sets + sync de cartas de un set, tabla verde/rojo) pero para el catálogo de ese idioma (tcgdex.dev) — catálogo de sets independiente por idioma, no una traducción del inglés. |
 | `/sync-status`| (uso interno, JS) Proxy a `GET {TCGAPI_BASE_URL}/sync/status` — progreso de la sincronización en curso. |
 
-Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas requieren además `POKEMONTCG_API_KEY` configurada en TCGAPI.
+Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas en inglés requieren además `POKEMONTCG_API_KEY` configurada en TCGAPI (las de `/admin/langs/` no necesitan API key, tcgdex.dev es abierta).
 
 ## Variables de entorno
 
@@ -105,9 +107,9 @@ TCGWEB/
     ├── __init__.py       App factory (create_app)
     ├── config.py          Configuración
     ├── routes/             Blueprints / vistas (main, pokedex, admin, sync_status)
-    ├── api_calls/           Llamadas HTTP a TCGAPI, separadas de las vistas (sync_api.py, sets_api.py, pokedex_api.py)
+    ├── api_calls/           Llamadas HTTP a TCGAPI, separadas de las vistas (sync_api.py, sets_api.py, pokedex_api.py, lang_sets_api.py)
     ├── models/              Entidades / modelos de datos
-    ├── templates/            Plantillas Jinja2 (base.html, admin/index.html, admin/sets.html, etc.)
+    ├── templates/            Plantillas Jinja2 (base.html, admin/index.html, admin/sets.html, admin/langs.html, admin/lang_sets.html, etc.)
     └── static/
         ├── css/style.css       Estilos propios + overlay de sincronización
         └── js/sync.js           JS compartido: dispara sync, overlay con progreso en vivo, polling

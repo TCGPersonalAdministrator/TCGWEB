@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Cartas por idioma · TCG Personal Administrator{% endblock %}
+
+{% block content %}
+<h1>Cartas por idioma</h1>
+<p class="lead">Elige un idioma para sincronizar sus sets y cartas (catálogo independiente por idioma — tcgdex.dev).</p>
+
+<div class="list-group" style="max-width: 500px;">
+    {% for l in languages %}
+    <a href="{{ url_for('admin.lang_sets', lang=l.code) }}" class="list-group-item list-group-item-action">
+        {{ l.name }}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
