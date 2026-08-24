@@ -40,7 +40,7 @@ Parte web de la aplicación para gestión de colección Pokémon TCG. Escrita en
    ```bash
    python run.py
    ```
-   Por defecto arranca en `http://localhost:5000` con `debug=True`.
+   Por defecto arranca en `http://localhost:5000` con `debug=True` y `threaded=True` (necesario: las páginas de sincronización hacen polling en vivo a `/sync-status` mientras la sincronización corre, y con el servidor de desarrollo sin `threaded=True` esas peticiones se bloquean entre sí).
 
 ## Base de datos (MariaDB con Docker)
 
@@ -74,6 +74,20 @@ La base de datos corre en un contenedor Docker de MariaDB, definido en `docker-c
 | Contraseña    | `admin1234`   |
 | Base de datos | `tcg_db`      |
 
+## Páginas / funcionalidades
+
+Todas las sincronizaciones siguen el mismo patrón: al pulsar el botón se dispara una petición `POST .../start` a TCGAPI (fire-and-forget, no espera), se muestra un **overlay a pantalla completa** que bloquea la interacción con la app, y JS (`static/js/sync.js`) hace *polling* a `GET /sync-status` cada 700ms para actualizar el contador (`current/total`) en vivo. Al terminar, se muestra un banner con el resultado (verde si OK, rojo si error) y la página se recarga a los 2s para reflejar el nuevo estado. Solo se permite una sincronización a la vez (si ya hay una en curso, se avisa en vez de arrancar otra).
+
+| Ruta          | Descripción |
+|---------------|---|
+| `/`           | Página de inicio |
+| `/pokedex/`   | Botón "Sincronizar Pokédex" — sincroniza todos los Pokémon desde PokeAPI (~5s). |
+| `/admin/`     | Hub de administración, enlaza a las secciones de sincronización (Pokédex, Sets y Cartas). |
+| `/admin/sets/`| Botón "Sincronizar lista de sets" (174 sets, sin cartas). Tabla con todos los sets: **verde** ("Actualizado", con fecha) si ya se sincronizaron sus cartas, **rojo** ("Sin actualizar") si no. Desplegable + botón "Actualizar" para sincronizar las cartas de **un solo set** a la vez — así no se satura la API con miles de peticiones de golpe (antes había un botón que traía las ~20.479 cartas de una sentada; se quitó por ser demasiado lento e inestable). Precios excluidos por ahora (ver README de TCGAPI). |
+| `/sync-status`| (uso interno, JS) Proxy a `GET {TCGAPI_BASE_URL}/sync/status` — progreso de la sincronización en curso. |
+
+Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas requieren además `POKEMONTCG_API_KEY` configurada en TCGAPI.
+
 ## Variables de entorno
 
 | Variable          | Descripción                                  | Por defecto              |
@@ -90,10 +104,13 @@ TCGWEB/
 └── app/
     ├── __init__.py       App factory (create_app)
     ├── config.py          Configuración
-    ├── routes/             Blueprints (rutas)
+    ├── routes/             Blueprints / vistas (main, pokedex, admin, sync_status)
+    ├── api_calls/           Llamadas HTTP a TCGAPI, separadas de las vistas (sync_api.py, sets_api.py, pokedex_api.py)
     ├── models/              Entidades / modelos de datos
-    ├── templates/            Plantillas Jinja2 (base.html, etc.)
-    └── static/{css,js}/        Estáticos
+    ├── templates/            Plantillas Jinja2 (base.html, admin/index.html, admin/sets.html, etc.)
+    └── static/
+        ├── css/style.css       Estilos propios + overlay de sincronización
+        └── js/sync.js           JS compartido: dispara sync, overlay con progreso en vivo, polling
 ```
 
 ## Debug en VS Code

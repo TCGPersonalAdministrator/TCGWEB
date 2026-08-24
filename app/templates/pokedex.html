@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Pokédex · TCG Personal Administrator{% endblock %}
+
+{% block content %}
+<h1>Pokédex</h1>
+<p class="lead">Sincroniza todos los Pokémon desde PokeAPI hacia la base de datos.</p>
+
+<button id="btn-sync-pokedex" type="button" class="btn btn-primary">Sincronizar Pokédex</button>
+
+<div id="sync-result-banner" class="mt-3"></div>
+
+<div id="sync-overlay" class="sync-overlay d-none">
+    <div class="sync-overlay-content">
+        <div class="spinner-border text-light mb-3" role="status"></div>
+        <div id="sync-overlay-text">Sincronizando...</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/sync.js') }}"></script>
+<script>
+    initSyncButton("btn-sync-pokedex", "{{ url_for('pokedex.sync_start') }}");
+</script>
+{% endblock %}

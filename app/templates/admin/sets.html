@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Sets y Cartas · TCG Personal Administrator{% endblock %}
+
+{% block content %}
+<h1>Sets y Cartas</h1>
+<p class="lead">Primero sincroniza la lista de sets. Después, elige un set del desplegable y actualiza sus cartas de una en una para no saturar la API.</p>
+
+<button id="btn-sync-sets" type="button" class="btn btn-primary mb-4">Sincronizar lista de sets</button>
+
+<div id="sync-result-banner" class="mb-3"></div>
+
+{% if sets %}
+<div class="mb-4">
+    <label for="set-select" class="form-label">Actualizar cartas de un set</label>
+    <div class="input-group" style="max-width: 600px;">
+        <select id="set-select" class="form-select">
+            {% for s in sets %}
+            <option value="{{ s.id }}">{{ s.name }} ({{ s.series }}) — {{ s.printed_total }} cartas</option>
+            {% endfor %}
+        </select>
+        <button id="btn-sync-set-cards" type="button" class="btn btn-primary">Actualizar</button>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Set</th>
+            <th>Serie</th>
+            <th>Cartas</th>
+            <th>Salida</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sets %}
+        <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.series }}</td>
+            <td>{{ s.printed_total }}</td>
+            <td>{{ s.release_date or "—" }}</td>
+            <td>
+                {% if s.cards_synced_at %}
+                <span class="badge bg-success">Actualizado ({{ s.cards_synced_at }})</span>
+                {% else %}
+                <span class="badge bg-danger">Sin actualizar</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">Todavía no hay sets sincronizados. Pulsa "Sincronizar lista de sets" para empezar.</p>
+{% endif %}
+
+<div id="sync-overlay" class="sync-overlay d-none">
+    <div class="sync-overlay-content">
+        <div class="spinner-border text-light mb-3" role="status"></div>
+        <div id="sync-overlay-text">Sincronizando...</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/sync.js') }}"></script>
+<script>
+    function reloadAfterDelay() {
+        setTimeout(() => window.location.reload(), 2000);
+    }
+
+    initSyncButton("btn-sync-sets", "{{ url_for('admin.sets_sync_start') }}", reloadAfterDelay);
+
+    const setCardsBtn = document.getElementById("btn-sync-set-cards");
+    if (setCardsBtn) {
+        setCardsBtn.addEventListener("click", () => {
+            const setId = document.getElementById("set-select").value;
+            runSync(`/admin/sets/${setId}/cards/sync/start`, reloadAfterDelay);
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Administración · TCG Personal Administrator{% endblock %}
+
+{% block content %}
+<h1>Administración</h1>
+<p class="lead">Gestión y sincronización de datos con las fuentes externas.</p>
+
+<div class="list-group" style="max-width: 500px;">
+    <a href="{{ url_for('pokedex.index') }}" class="list-group-item list-group-item-action">
+        <strong>Pokédex</strong>
+        <div class="text-muted small">Sincronizar todos los Pokémon desde PokeAPI</div>
+    </a>
+    <a href="{{ url_for('admin.sets') }}" class="list-group-item list-group-item-action">
+        <strong>Sets y Cartas</strong>
+        <div class="text-muted small">Sincronizar la lista de sets y las cartas de cada set, uno a uno</div>
+    </a>
+</div>
+{% endblock %}
