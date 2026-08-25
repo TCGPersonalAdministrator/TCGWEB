@@ -4,23 +4,34 @@
 
 {% block content %}
 <h1>Pokédex</h1>
-<p class="lead">Sincroniza todos los Pokémon desde PokeAPI hacia la base de datos.</p>
 
-<button id="btn-sync-pokedex" type="button" class="btn btn-primary">Sincronizar Pokédex</button>
-
-<div id="sync-result-banner" class="mt-3"></div>
-
-<div id="sync-overlay" class="sync-overlay d-none">
-    <div class="sync-overlay-content">
-        <div class="spinner-border text-light mb-3" role="status"></div>
-        <div id="sync-overlay-text">Sincronizando...</div>
-    </div>
+{% if not pokemon %}
+<p class="text-muted">
+    Todavía no hay datos de la Pokédex. Sincronízala primero desde
+    <a href="{{ url_for('admin.pokedex') }}">Administración</a>.
+</p>
+{% else %}
+{% set owned_count = pokemon | selectattr("owned") | list | length %}
+{% set total = pokemon | length %}
+<p class="lead">
+    Reto del coleccionista: al menos 1 carta de cada Pokémon —
+    <strong>{{ owned_count }} / {{ total }}</strong> conseguidos.
+</p>
+<div class="progress mb-4" role="progressbar" aria-valuenow="{{ owned_count }}" aria-valuemin="0" aria-valuemax="{{ total }}">
+    <div class="progress-bar bg-success" style="width: {{ (owned_count / total * 100) | round(1) }}%"></div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/sync.js') }}"></script>
-<script>
-    initSyncButton("btn-sync-pokedex", "{{ url_for('pokedex.sync_start') }}");
-</script>
+<div class="pokedex-grid">
+    {% for p in pokemon %}
+    <div class="pokedex-tile {{ 'owned' if p.owned else 'missing' }}" title="{{ p.name }}{{ ' — conseguido' if p.owned else ' — falta' }}">
+        {% if p.image_url %}
+        <img src="{{ tcgapi_base_url }}{{ p.image_url }}" alt="{{ p.name }}" loading="lazy">
+        {% else %}
+        <div class="pokedex-tile-placeholder">?</div>
+        {% endif %}
+        <div class="pokedex-tile-name">#{{ p.id }} {{ p.name }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

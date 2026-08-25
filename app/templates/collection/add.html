@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Añadir carta · TCG Personal Administrator{% endblock %}
+
+{% block content %}
+<h1>Añadir carta</h1>
+<p class="lead">Elige el idioma, busca el Pokémon y elige la carta que tienes.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-auto">
+        <label for="add-lang" class="form-label">1. Idioma</label>
+        <select id="add-lang" class="form-select">
+            {% for l in languages %}
+            <option value="{{ l.code }}">{{ l.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto" style="min-width: 280px;">
+        <label for="add-pokemon-search" class="form-label">2. Pokémon</label>
+        <input id="add-pokemon-search" type="text" class="form-control" placeholder="Ej. charizard" autocomplete="off">
+        <div id="add-pokemon-results" class="list-group position-absolute" style="z-index: 1000; max-width: 280px;"></div>
+    </div>
+</div>
+
+<div id="add-result-banner"></div>
+
+<div id="add-cards-section" class="d-none">
+    <h2 id="add-cards-title" class="h5"></h2>
+    <div id="add-cards-grid" class="card-grid"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const TCGAPI_BASE_URL = "{{ tcgapi_base_url }}";
+</script>
+<script src="{{ url_for('static', filename='js/collection.js') }}"></script>
+{% endblock %}

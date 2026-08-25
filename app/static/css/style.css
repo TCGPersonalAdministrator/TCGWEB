@@ -19,3 +19,86 @@
     text-align: center;
     font-size: 1.25rem;
 }
+
+/* Pokédex general: rejilla de Pokémon, atenuados los que faltan por conseguir */
+
+.pokedex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.75rem;
+}
+
+.pokedex-tile {
+    text-align: center;
+    font-size: 0.7rem;
+    line-height: 1.2;
+}
+
+.pokedex-tile img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    background: #f1f3f5;
+    border-radius: 0.5rem;
+}
+
+.pokedex-tile.missing img {
+    filter: grayscale(100%) brightness(0.65);
+    opacity: 0.55;
+}
+
+.pokedex-tile-placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f3f5;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    color: #adb5bd;
+}
+
+.pokedex-tile-name {
+    margin-top: 0.25rem;
+    text-transform: capitalize;
+}
+
+/* Mi colección / añadir carta: rejilla de cartas */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.card-tile {
+    position: relative;
+    text-align: center;
+}
+
+.card-tile img {
+    width: 100%;
+    border-radius: 0.5rem;
+}
+
+.card-tile-qty {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.card-tile-info {
+    margin-top: 0.35rem;
+}
+
+.card-tile-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}

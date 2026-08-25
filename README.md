@@ -81,14 +81,17 @@ Todas las sincronizaciones siguen el mismo patrón: al pulsar el botón se dispa
 | Ruta          | Descripción |
 |---------------|---|
 | `/`           | Página de inicio |
-| `/pokedex/`   | Botón "Sincronizar Pokédex" — sincroniza todos los Pokémon desde PokeAPI (~5s). |
+| `/pokedex/`   | **Vista pública de la Pokédex**: rejilla con los 1025 Pokémon, en color los que ya tienen al menos 1 carta registrada (`owned`) y atenuados/gris los que faltan, con barra de progreso — es el reto del coleccionista, no la administración/sync. |
+| `/collection/` | **Mi colección**: todas las cartas que posee el usuario, con imagen, filtro desplegable por idioma. Botón "Añadir carta". |
+| `/collection/add/` | Flujo para añadir una carta: elegir idioma → buscar Pokémon por nombre (autocompletado) → ver sus cartas en ese idioma con imagen → pulsar "Añadir" en la que corresponda (incrementa cantidad si ya la tenías). |
 | `/admin/`     | Hub de administración, enlaza a las secciones de sincronización (Pokédex, Sets y Cartas en inglés, Cartas por idioma). |
+| `/admin/pokedex/` | Botón "Sincronizar Pokédex" — sincroniza todos los Pokémon desde PokeAPI (~5s). (Antes vivía en `/pokedex/`, movido aquí al convertir esa ruta en la vista pública de progreso.) |
 | `/admin/sets/`| Sets y cartas **en inglés** (pokemontcg.io). Botón "Sincronizar lista de sets" (174 sets, sin cartas). Tabla con todos los sets: **verde** ("Actualizado", con fecha) si ya se sincronizaron sus cartas, **rojo** ("Sin actualizar") si no. Desplegable + botón "Actualizar" para sincronizar las cartas de **un solo set** a la vez — así no se satura la API con miles de peticiones de golpe (antes había un botón que traía las ~20.479 cartas de una sentada; se quitó por ser demasiado lento e inestable). Precios excluidos por ahora (ver README de TCGAPI). |
 | `/admin/langs/` | Selector de idioma: español, japonés, coreano, chino simplificado. |
 | `/admin/langs/<lang>/sets/` | Mismo patrón que `/admin/sets/` (sync de lista de sets + sync de cartas de un set, tabla verde/rojo) pero para el catálogo de ese idioma (tcgdex.dev) — catálogo de sets independiente por idioma, no una traducción del inglés. |
 | `/sync-status`| (uso interno, JS) Proxy a `GET {TCGAPI_BASE_URL}/sync/status` — progreso de la sincronización en curso. |
 
-Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas en inglés requieren además `POKEMONTCG_API_KEY` configurada en TCGAPI (las de `/admin/langs/` no necesitan API key, tcgdex.dev es abierta).
+Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas en inglés requieren además `POKEMONTCG_API_KEY` configurada en TCGAPI (las de `/admin/langs/` no necesitan API key, tcgdex.dev es abierta). Las imágenes (Pokédex y cartas) las sirve TCGAPI en su propio puerto (`GET {TCGAPI_BASE_URL}/images/...`); las plantillas reciben `tcgapi_base_url` (context processor en `app/__init__.py`) para construir esas URLs, ya que TCGWEB corre en un puerto distinto.
 
 ## Variables de entorno
 

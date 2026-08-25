@@ -6,6 +6,7 @@ from app.api_calls.lang_sets_api import (
     start_sync_lang_set_cards,
     start_sync_lang_sets,
 )
+from app.api_calls.pokedex_api import start_sync_pokedex
 from app.api_calls.sets_api import list_sets, start_sync_set_cards, start_sync_sets
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -14,6 +15,17 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @admin_bp.route("/", methods=["GET"])
 def index():
     return render_template("admin/index.html")
+
+
+@admin_bp.route("/pokedex/", methods=["GET"])
+def pokedex():
+    return render_template("admin/pokedex.html")
+
+
+@admin_bp.route("/pokedex/sync/start", methods=["POST"])
+def pokedex_sync_start():
+    body, status_code = start_sync_pokedex()
+    return jsonify(body), status_code
 
 
 @admin_bp.route("/sets/", methods=["GET"])

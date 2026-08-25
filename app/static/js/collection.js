@@ -1,0 +1,118 @@
+function debounce(fn, delayMs) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delayMs);
+    };
+}
+
+function initCollectionAdd() {
+    const langSelect = document.getElementById("add-lang");
+    const pokemonInput = document.getElementById("add-pokemon-search");
+    const pokemonResults = document.getElementById("add-pokemon-results");
+    const cardsSection = document.getElementById("add-cards-section");
+    const cardsTitle = document.getElementById("add-cards-title");
+    const cardsGrid = document.getElementById("add-cards-grid");
+    const banner = document.getElementById("add-result-banner");
+
+    if (!pokemonInput) return;
+
+    let selectedPokemon = null;
+
+    const runSearch = debounce((q) => {
+        if (!q) {
+            pokemonResults.innerHTML = "";
+            return;
+        }
+        fetch(`/collection/add/search-pokemon?q=${encodeURIComponent(q)}`)
+            .then((r) => r.json())
+            .then(renderPokemonResults)
+            .catch(() => {
+                pokemonResults.innerHTML = "";
+            });
+    }, 300);
+
+    pokemonInput.addEventListener("input", (e) => runSearch(e.target.value.trim()));
+
+    langSelect.addEventListener("change", () => {
+        if (selectedPokemon) loadCards(selectedPokemon);
+    });
+
+    function renderPokemonResults(pokemon) {
+        pokemonResults.innerHTML = "";
+        pokemon.forEach((p) => {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "list-group-item list-group-item-action d-flex align-items-center gap-2";
+            const img = p.image_url ? `<img src="${TCGAPI_BASE_URL}${p.image_url}" width="28" height="28" alt="">` : "";
+            item.innerHTML = `${img}<span>#${p.id} ${p.name}</span>`;
+            item.addEventListener("click", () => {
+                selectedPokemon = p;
+                pokemonInput.value = p.name;
+                pokemonResults.innerHTML = "";
+                loadCards(p);
+            });
+            pokemonResults.appendChild(item);
+        });
+    }
+
+    function loadCards(pokemon) {
+        const lang = langSelect.value;
+        cardsSection.classList.remove("d-none");
+        cardsTitle.textContent = `Cartas de ${pokemon.name}...`;
+        cardsGrid.innerHTML = "";
+
+        fetch(`/collection/add/pokemon/${pokemon.id}/cards?lang=${encodeURIComponent(lang)}`)
+            .then((r) => r.json())
+            .then((cards) => {
+                cardsTitle.textContent = `Cartas de ${pokemon.name} (${langSelect.selectedOptions[0].textContent})`;
+                if (!cards.length) {
+                    cardsGrid.innerHTML = '<p class="text-muted">No hay cartas de este Pokémon en este idioma todavía.</p>';
+                    return;
+                }
+                cards.forEach((c) => cardsGrid.appendChild(buildCardTile(c, lang)));
+            });
+    }
+
+    function buildCardTile(card, lang) {
+        const tile = document.createElement("div");
+        tile.className = "card-tile";
+        const img = card.image_url
+            ? `<img src="${TCGAPI_BASE_URL}${card.image_url}" alt="${card.name}" loading="lazy">`
+            : '<div class="pokedex-tile-placeholder">?</div>';
+        tile.innerHTML = `
+            ${img}
+            <div class="card-tile-info">
+                <div class="card-tile-name">${card.name}</div>
+                <div class="card-tile-set text-muted small">${card.set_name}${card.number ? " · #" + card.number : ""}</div>
+                <button type="button" class="btn btn-sm btn-primary mt-1 w-100 btn-add-card">Añadir</button>
+            </div>
+        `;
+        tile.querySelector(".btn-add-card").addEventListener("click", (e) => addCard(card, lang, e.target));
+        return tile;
+    }
+
+    function addCard(card, lang, button) {
+        button.disabled = true;
+        fetch("/collection/add/card", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ card_id: card.id, lang }),
+        })
+            .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
+            .then(({ ok, body }) => {
+                button.disabled = false;
+                if (!ok) {
+                    banner.innerHTML = `<div class="alert alert-danger">No se pudo añadir "${card.name}": ${body.error || "error desconocido"}</div>`;
+                    return;
+                }
+                banner.innerHTML = `<div class="alert alert-success">"${card.name}" añadida — ahora tienes ${body.cantidad}.</div>`;
+            })
+            .catch(() => {
+                button.disabled = false;
+                banner.innerHTML = '<div class="alert alert-danger">No se pudo conectar con el servidor.</div>';
+            });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", initCollectionAdd);
