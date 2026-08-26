@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% from "_macros.html" import sync_overlay, sync_status_badge %}
 
 {% block title %}Sets ({{ lang }}) · TCG Personal Administrator{% endblock %}
 
 {% block content %}
 <h1>Sets y Cartas — {{ lang }}</h1>
 <p class="lead">Primero sincroniza la lista de sets. Después, elige un set del desplegable y actualiza sus cartas de una en una para no saturar la API.</p>
-<p><a href="{{ url_for('admin.langs') }}">&larr; Cambiar idioma</a></p>
+<p><a href="{{ url_for('admin.langs') }}"><i class="bi bi-arrow-left"></i> Cambiar idioma</a></p>
 
-<button id="btn-sync-sets" type="button" class="btn btn-primary mb-4">Sincronizar lista de sets</button>
+<button id="btn-sync-sets" type="button" class="btn btn-primary mb-4"><i class="bi bi-arrow-repeat"></i> Sincronizar lista de sets</button>
 
 <div id="sync-result-banner" class="mb-3"></div>
 
@@ -20,7 +21,7 @@
             <option value="{{ s.id }}">{{ s.name }} ({{ s.series or "—" }}) — {{ s.official_total }} cartas</option>
             {% endfor %}
         </select>
-        <button id="btn-sync-set-cards" type="button" class="btn btn-primary">Actualizar</button>
+        <button id="btn-sync-set-cards" type="button" class="btn btn-primary"><i class="bi bi-cloud-arrow-down-fill"></i> Actualizar</button>
     </div>
 </div>
 
@@ -41,13 +42,7 @@
             <td>{{ s.series or "—" }}</td>
             <td>{{ s.official_total }}</td>
             <td>{{ s.release_date or "—" }}</td>
-            <td>
-                {% if s.cards_synced_at %}
-                <span class="badge bg-success">Actualizado ({{ s.cards_synced_at }})</span>
-                {% else %}
-                <span class="badge bg-danger">Sin actualizar</span>
-                {% endif %}
-            </td>
+            <td>{{ sync_status_badge(s.cards_synced_at) }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -56,12 +51,7 @@
 <p class="text-muted">Todavía no hay sets sincronizados. Pulsa "Sincronizar lista de sets" para empezar.</p>
 {% endif %}
 
-<div id="sync-overlay" class="sync-overlay d-none">
-    <div class="sync-overlay-content">
-        <div class="spinner-border text-light mb-3" role="status"></div>
-        <div id="sync-overlay-text">Sincronizando...</div>
-    </div>
-</div>
+{{ sync_overlay() }}
 {% endblock %}
 
 {% block scripts %}

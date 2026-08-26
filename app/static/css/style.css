@@ -1,9 +1,212 @@
-/* Estilos propios del proyecto, encima de Bootstrap */
+/* ============================================================
+   Tema "Pokémon" — paleta, tipografía y animaciones por encima
+   de Bootstrap. Se apoya en las variables CSS de Bootstrap 5.3
+   (--bs-*) para que los componentes de serie (botones, badges,
+   alerts, cards, inputs...) hereden el tema sin tocar su HTML.
+   ============================================================ */
+
+:root {
+    --pkmn-red: #ee1515;
+    --pkmn-red-dark: #b80f0f;
+    --pkmn-blue: #3b4cca;
+    --pkmn-blue-dark: #26317f;
+    --pkmn-yellow: #ffcb05;
+    --pkmn-yellow-dark: #e0a900;
+    --pkmn-cream: #fff8ec;
+    --pkmn-ink: #262322;
+
+    --bs-body-font-family: "Nunito", system-ui, sans-serif;
+    --bs-body-bg: var(--pkmn-cream);
+    --bs-body-color: var(--pkmn-ink);
+    --bs-primary: var(--pkmn-red);
+    --bs-primary-rgb: 238, 21, 21;
+    --bs-secondary: var(--pkmn-blue);
+    --bs-secondary-rgb: 59, 76, 202;
+    --bs-link-color: var(--pkmn-blue);
+    --bs-link-color-rgb: 59, 76, 202;
+    --bs-link-hover-color: var(--pkmn-blue-dark);
+    --bs-border-radius: 0.9rem;
+    --bs-border-radius-lg: 1.25rem;
+    --bs-border-radius-sm: 0.6rem;
+    --bs-border-radius-pill: 50rem;
+}
+
+body {
+    background:
+        radial-gradient(circle at 8% 0%, rgba(59, 76, 202, 0.10) 0%, transparent 32%),
+        radial-gradient(circle at 100% 15%, rgba(255, 203, 5, 0.16) 0%, transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(238, 21, 21, 0.06) 0%, transparent 40%),
+        var(--pkmn-cream);
+    background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: "Baloo 2", "Nunito", system-ui, sans-serif;
+    font-weight: 700;
+    color: var(--pkmn-ink);
+}
+
+h1 {
+    letter-spacing: 0.02em;
+}
+
+a {
+    transition: color 0.15s ease;
+}
+
+/* ---------- Entrada de página ---------- */
+
+@keyframes page-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+    animation: page-enter 0.35s ease-out;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+    background: linear-gradient(135deg, var(--pkmn-blue-dark) 0%, var(--pkmn-blue) 100%);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    border-bottom: 3px solid var(--pkmn-yellow);
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    color: #fff !important;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 700;
+    padding: 0.4rem 0.9rem !important;
+    border-radius: var(--bs-border-radius-pill);
+    margin-left: 0.15rem;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.14);
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link i {
+    margin-right: 0.25rem;
+}
+
+/* Pokéball dibujada solo con CSS — icono de marca, sin necesitar assets binarios */
+
+.pokeball-icon {
+    display: inline-block;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    border: 2px solid var(--pkmn-ink);
+    background:
+        radial-gradient(circle at 50% 50%, #fff 0 20%, var(--pkmn-ink) 20% 26%, transparent 26%),
+        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, var(--pkmn-ink) 46%, var(--pkmn-ink) 54%, #fff 54%, #fff 100%);
+    flex-shrink: 0;
+}
+
+/* ---------- Botones ---------- */
+
+.btn {
+    font-weight: 700;
+    border-radius: var(--bs-border-radius-pill);
+    padding: 0.5rem 1.25rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.btn-primary {
+    background-image: linear-gradient(135deg, var(--pkmn-red) 0%, var(--pkmn-red-dark) 100%);
+    border: none;
+    box-shadow: 0 4px 10px rgba(238, 21, 21, 0.35);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-image: linear-gradient(135deg, var(--pkmn-red) 0%, var(--pkmn-red-dark) 100%);
+    box-shadow: 0 6px 16px rgba(238, 21, 21, 0.45);
+}
+
+.btn i {
+    margin-right: 0.3rem;
+}
+
+/* ---------- Tarjetas / list-group ---------- */
+
+.list-group-item-action {
+    border-radius: var(--bs-border-radius) !important;
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.list-group-item-action:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    border-color: var(--pkmn-yellow) !important;
+    z-index: 1;
+}
+
+/* ---------- Alerts ---------- */
+
+@keyframes alert-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert {
+    border: none;
+    border-left: 5px solid currentColor;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    animation: alert-in 0.3s ease-out;
+}
+
+/* ---------- Barra de progreso ---------- */
+
+.progress {
+    border-radius: var(--bs-border-radius-pill);
+    background-color: rgba(0, 0, 0, 0.08);
+    height: 1.1rem;
+}
+
+.progress-bar {
+    background-image: linear-gradient(90deg, var(--pkmn-yellow) 0%, var(--pkmn-red) 100%);
+}
+
+/* ---------- Spinner de sincronización — pokéball girando ---------- */
+
+.spinner-border {
+    width: 3.25rem;
+    height: 3.25rem;
+    border: 3px solid var(--pkmn-ink);
+    background:
+        radial-gradient(circle at 50% 50%, #fff 0 18%, var(--pkmn-ink) 18% 24%, transparent 24%),
+        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, var(--pkmn-ink) 46%, var(--pkmn-ink) 54%, #fff 54%, #fff 100%);
+    animation: pokeball-spin 0.9s linear infinite;
+}
+
+@keyframes pokeball-spin {
+    to { transform: rotate(360deg); }
+}
 
 .sync-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(38, 35, 34, 0.82);
+    backdrop-filter: blur(2px);
     z-index: 1050;
     display: flex;
     align-items: center;
@@ -18,9 +221,10 @@
     color: #fff;
     text-align: center;
     font-size: 1.25rem;
+    font-family: "Baloo 2", sans-serif;
 }
 
-/* Pokédex general: rejilla de Pokémon, atenuados los que faltan por conseguir */
+/* ---------- Pokédex general: rejilla de Pokémon ---------- */
 
 .pokedex-grid {
     display: grid;
@@ -38,13 +242,28 @@
     width: 100%;
     aspect-ratio: 1;
     object-fit: contain;
-    background: #f1f3f5;
-    border-radius: 0.5rem;
+    background: #fff;
+    border-radius: var(--bs-border-radius);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pokedex-tile:hover img {
+    transform: scale(1.08) rotate(-2deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.pokedex-tile.owned img {
+    box-shadow: 0 0 0 3px var(--pkmn-yellow), 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .pokedex-tile.missing img {
     filter: grayscale(100%) brightness(0.65);
     opacity: 0.55;
+}
+
+.pokedex-tile.missing:hover img {
+    opacity: 0.85;
 }
 
 .pokedex-tile-placeholder {
@@ -53,54 +272,88 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f3f5;
-    border-radius: 0.5rem;
+    background: #fff;
+    border-radius: var(--bs-border-radius);
     font-size: 1.5rem;
     color: #adb5bd;
+    font-family: "Baloo 2", sans-serif;
 }
 
 .pokedex-tile-name {
-    margin-top: 0.25rem;
+    margin-top: 0.3rem;
     text-transform: capitalize;
+    font-weight: 700;
 }
 
-/* Mi colección / añadir carta: rejilla de cartas */
+/* ---------- Mi colección / añadir carta: rejilla de cartas ---------- */
 
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
+    gap: 1.1rem;
 }
 
 .card-tile {
     position: relative;
     text-align: center;
+    transition: transform 0.15s ease;
 }
 
 .card-tile img {
     width: 100%;
-    border-radius: 0.5rem;
+    border-radius: var(--bs-border-radius);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-tile:hover img {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
 }
 
 .card-tile-qty {
     position: absolute;
     top: 0.35rem;
     right: 0.35rem;
-    background: rgba(0, 0, 0, 0.75);
+    background: var(--pkmn-red);
     color: #fff;
-    padding: 0.1rem 0.4rem;
-    border-radius: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--bs-border-radius-pill);
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .card-tile-info {
-    margin-top: 0.35rem;
+    margin-top: 0.4rem;
 }
 
 .card-tile-name {
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 800;
+    font-family: "Baloo 2", sans-serif;
+}
+
+/* Brillo/rebote al añadir una carta con éxito */
+
+@keyframes just-added {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.08); }
+    60%  { transform: scale(0.98); }
+    100% { transform: scale(1); }
+}
+
+@keyframes just-added-glow {
+    0%, 100% { box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); }
+    40% { box-shadow: 0 0 0 6px rgba(255, 203, 5, 0.55), 0 6px 20px rgba(255, 203, 5, 0.4); }
+}
+
+.card-tile.just-added {
+    animation: just-added 0.5s ease;
+}
+
+.card-tile.just-added img {
+    animation: just-added-glow 0.9s ease;
 }
 
 /* Quitar una carta de la colección: encoge y se desvanece antes de irse del DOM */

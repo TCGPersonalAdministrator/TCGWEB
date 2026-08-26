@@ -1,0 +1,18 @@
+{# Macros compartidas entre plantillas — evita repetir el mismo HTML en varias páginas. #}
+
+{% macro sync_overlay() %}
+<div id="sync-overlay" class="sync-overlay d-none">
+    <div class="sync-overlay-content">
+        <div class="spinner-border text-light mb-3" role="status"></div>
+        <div id="sync-overlay-text">Sincronizando...</div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro sync_status_badge(synced_at) %}
+{% if synced_at %}
+<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Actualizado ({{ synced_at }})</span>
+{% else %}
+<span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Sin actualizar</span>
+{% endif %}
+{% endmacro %}

@@ -18,7 +18,7 @@
     <strong>{{ owned_count }} / {{ total }}</strong> conseguidos.
 </p>
 <div class="progress mb-4" role="progressbar" aria-valuenow="{{ owned_count }}" aria-valuemin="0" aria-valuemax="{{ total }}">
-    <div class="progress-bar bg-success" style="width: {{ (owned_count / total * 100) | round(1) }}%"></div>
+    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ (owned_count / total * 100) | round(1) }}%"></div>
 </div>
 
 <div class="pokedex-grid">

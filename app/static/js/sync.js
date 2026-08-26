@@ -18,7 +18,8 @@ function hideSyncOverlay() {
 function showSyncBanner(message, type) {
     const banner = document.getElementById("sync-result-banner");
     if (!banner) return;
-    banner.innerHTML = `<div class="alert alert-${type}" role="alert">${message}</div>`;
+    const icon = type === "success" ? "bi-check-circle-fill" : type === "warning" ? "bi-exclamation-circle-fill" : "bi-exclamation-triangle-fill";
+    banner.innerHTML = `<div class="alert alert-${type}" role="alert"><i class="bi ${icon}"></i> ${message}</div>`;
 }
 
 function buildSyncResultMessage(result) {

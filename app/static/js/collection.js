@@ -85,7 +85,7 @@ function initCollectionAdd() {
             <div class="card-tile-info">
                 <div class="card-tile-name">${card.name}</div>
                 <div class="card-tile-set text-muted small">${card.set_name}${card.number ? " · #" + card.number : ""}</div>
-                <button type="button" class="btn btn-sm btn-primary mt-1 w-100 btn-add-card">Añadir</button>
+                <button type="button" class="btn btn-sm btn-primary mt-1 w-100 btn-add-card"><i class="bi bi-plus-circle-fill"></i> Añadir</button>
             </div>
         `;
         tile.querySelector(".btn-add-card").addEventListener("click", (e) => addCard(card, lang, e.target));
@@ -103,14 +103,20 @@ function initCollectionAdd() {
             .then(({ ok, body }) => {
                 button.disabled = false;
                 if (!ok) {
-                    banner.innerHTML = `<div class="alert alert-danger">No se pudo añadir "${card.name}": ${body.error || "error desconocido"}</div>`;
+                    banner.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo añadir "${card.name}": ${body.error || "error desconocido"}</div>`;
                     return;
                 }
-                banner.innerHTML = `<div class="alert alert-success">"${card.name}" añadida — ahora tienes ${body.cantidad}.</div>`;
+                banner.innerHTML = `<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> "${card.name}" añadida — ahora tienes ${body.cantidad}.</div>`;
+                const tile = button.closest(".card-tile");
+                if (tile) {
+                    tile.classList.remove("just-added");
+                    void tile.offsetWidth; // reinicia la animación si se pulsa varias veces seguidas
+                    tile.classList.add("just-added");
+                }
             })
             .catch(() => {
                 button.disabled = false;
-                banner.innerHTML = '<div class="alert alert-danger">No se pudo conectar con el servidor.</div>';
+                banner.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo conectar con el servidor.</div>';
             });
     }
 }
