@@ -19,10 +19,11 @@
 </form>
 
 {% if not cards %}
-<p class="text-muted">Todavía no tienes ninguna carta registrada.</p>
+<p class="text-muted" id="empty-collection-msg">Todavía no tienes ninguna carta registrada.</p>
 {% else %}
-<p class="text-muted">{{ cards | length }} carta{{ "s" if cards | length != 1 else "" }} distinta{{ "s" if cards | length != 1 else "" }}.</p>
-<div class="card-grid">
+<p class="text-muted" id="collection-count">{{ cards | length }} carta{{ "s" if cards | length != 1 else "" }} distinta{{ "s" if cards | length != 1 else "" }}.</p>
+{% endif %}
+<div class="card-grid" id="collection-grid">
     {% for c in cards %}
     <div class="card-tile">
         {% if c.image_url %}
@@ -36,9 +37,15 @@
         <div class="card-tile-info">
             <div class="card-tile-name">{{ c.name }}</div>
             <div class="card-tile-set text-muted small">{{ c.set_name }}</div>
+            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-card mt-1" data-id="{{ c.id }}">
+                Eliminar
+            </button>
         </div>
     </div>
     {% endfor %}
 </div>
-{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/collection.js') }}"></script>
 {% endblock %}

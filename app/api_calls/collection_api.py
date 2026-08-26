@@ -36,3 +36,10 @@ def list_owned_cards(lang: str | None = None) -> list[dict]:
     )
     response.raise_for_status()
     return response.json()
+
+
+def delete_owned_card(card_row_id: int) -> tuple[dict, int]:
+    response = requests.delete(
+        f"{current_app.config['TCGAPI_BASE_URL']}/owned/cards/{card_row_id}", timeout=10
+    )
+    return response.json(), response.status_code

@@ -82,7 +82,7 @@ Todas las sincronizaciones siguen el mismo patrón: al pulsar el botón se dispa
 |---------------|---|
 | `/`           | Página de inicio |
 | `/pokedex/`   | **Vista pública de la Pokédex**: rejilla con los 1025 Pokémon, en color los que ya tienen al menos 1 carta registrada (`owned`) y atenuados/gris los que faltan, con barra de progreso — es el reto del coleccionista, no la administración/sync. |
-| `/collection/` | **Mi colección**: todas las cartas que posee el usuario, con imagen, filtro desplegable por idioma. Botón "Añadir carta". |
+| `/collection/` | **Mi colección**: todas las cartas que posee el usuario, con imagen, filtro desplegable por idioma. Botón "Añadir carta". Cada carta tiene un botón "Eliminar" (con confirmación) que la quita de la colección. |
 | `/collection/add/` | Flujo para añadir una carta: elegir idioma → buscar Pokémon por nombre (autocompletado) → ver sus cartas en ese idioma con imagen → pulsar "Añadir" en la que corresponda (incrementa cantidad si ya la tenías). |
 | `/admin/`     | Hub de administración, enlaza a las secciones de sincronización (Pokédex, Sets y Cartas en inglés, Cartas por idioma). |
 | `/admin/pokedex/` | Botón "Sincronizar Pokédex" — sincroniza todos los Pokémon desde PokeAPI (~5s). (Antes vivía en `/pokedex/`, movido aquí al convertir esa ruta en la vista pública de progreso.) |

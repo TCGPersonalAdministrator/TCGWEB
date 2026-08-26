@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, render_template, request
 
 from app.api_calls.collection_api import (
     add_owned_card,
+    delete_owned_card,
     list_all_languages,
     list_owned_cards,
     list_pokemon_cards,
@@ -47,4 +48,10 @@ def add_pokemon_cards(pokedex_id):
 def add_card():
     data = request.get_json(force=True, silent=True) or {}
     body, status_code = add_owned_card(data.get("card_id", ""), data.get("lang", ""))
+    return jsonify(body), status_code
+
+
+@collection_bp.route("/cards/<int:card_row_id>", methods=["DELETE"])
+def delete_card(card_row_id):
+    body, status_code = delete_owned_card(card_row_id)
     return jsonify(body), status_code

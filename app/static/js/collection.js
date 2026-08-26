@@ -115,4 +115,40 @@ function initCollectionAdd() {
     }
 }
 
+function initCollectionView() {
+    const grid = document.getElementById("collection-grid");
+    if (!grid) return;
+
+    const countEl = document.getElementById("collection-count");
+
+    grid.addEventListener("click", (e) => {
+        const deleteBtn = e.target.closest(".btn-delete-card");
+        if (deleteBtn) deleteCard(deleteBtn.dataset.id, deleteBtn.closest(".card-tile"));
+    });
+
+    function deleteCard(id, tile) {
+        if (!confirm("¿Eliminar esta carta de tu colección?")) return;
+        fetch(`/collection/cards/${id}`, { method: "DELETE" })
+            .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
+            .then(({ ok }) => {
+                if (!ok) return;
+                if (!tile) return;
+                tile.classList.add("removing");
+                setTimeout(() => {
+                    tile.remove();
+                    const remaining = grid.children.length;
+                    if (countEl) {
+                        countEl.textContent = remaining
+                            ? `${remaining} carta${remaining !== 1 ? "s" : ""} distinta${remaining !== 1 ? "s" : ""}.`
+                            : "";
+                    }
+                    if (remaining === 0) {
+                        grid.insertAdjacentHTML("afterend", '<p class="text-muted">Todavía no tienes ninguna carta registrada.</p>');
+                    }
+                }, 250);
+            });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", initCollectionAdd);
+document.addEventListener("DOMContentLoaded", initCollectionView);
