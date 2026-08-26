@@ -123,14 +123,45 @@ function initCollectionAdd() {
 
 function initCollectionView() {
     const grid = document.getElementById("collection-grid");
-    if (!grid) return;
+    const modalEl = document.getElementById("card-modal");
+    if (!grid || !modalEl) return;
 
+    const modal = new bootstrap.Modal(modalEl);
+    const titleEl = document.getElementById("card-modal-title");
+    const bodyEl = document.getElementById("card-modal-body");
     const countEl = document.getElementById("collection-count");
+    let currentTile = null;
 
     grid.addEventListener("click", (e) => {
         const deleteBtn = e.target.closest(".btn-delete-card");
-        if (deleteBtn) deleteCard(deleteBtn.dataset.id, deleteBtn.closest(".card-tile"));
+        if (deleteBtn) {
+            e.stopPropagation();
+            deleteCard(deleteBtn.dataset.id, deleteBtn.closest(".card-tile"));
+            return;
+        }
+        const tile = e.target.closest(".card-tile");
+        if (tile) openCardModal(tile);
     });
+
+    modalEl.addEventListener("click", (e) => {
+        const deleteBtn = e.target.closest(".btn-delete-card");
+        if (deleteBtn) deleteCard(deleteBtn.dataset.id, currentTile);
+    });
+
+    function openCardModal(tile) {
+        currentTile = tile;
+        titleEl.textContent = tile.dataset.name;
+        bodyEl.innerHTML = `
+            <img src="${tile.dataset.image}" class="card-modal-img" alt="${tile.dataset.name}">
+            <p class="text-muted mb-1 mt-2">${tile.dataset.set}</p>
+            ${tile.dataset.rarity ? `<p class="text-muted small">${tile.dataset.rarity}</p>` : ""}
+            <p>Cantidad: <strong>${tile.dataset.cantidad}</strong></p>
+            <button type="button" class="btn btn-outline-danger btn-delete-card" data-id="${tile.dataset.id}">
+                <i class="bi bi-trash3-fill"></i> Eliminar de la colección
+            </button>
+        `;
+        modal.show();
+    }
 
     function deleteCard(id, tile) {
         if (!confirm("¿Eliminar esta carta de tu colección?")) return;
@@ -138,6 +169,7 @@ function initCollectionView() {
             .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
             .then(({ ok }) => {
                 if (!ok) return;
+                modal.hide();
                 if (!tile) return;
                 tile.classList.add("removing");
                 setTimeout(() => {

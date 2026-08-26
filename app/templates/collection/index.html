@@ -23,9 +23,11 @@
 {% else %}
 <p class="text-muted" id="collection-count">{{ cards | length }} carta{{ "s" if cards | length != 1 else "" }} distinta{{ "s" if cards | length != 1 else "" }}.</p>
 {% endif %}
-<div class="card-grid" id="collection-grid">
+<div class="card-grid collection-grid" id="collection-grid">
     {% for c in cards %}
-    <div class="card-tile">
+    <div class="card-tile" data-id="{{ c.id }}" data-name="{{ c.name }}" data-set="{{ c.set_name }}"
+         data-rarity="{{ c.rarity or '' }}" data-cantidad="{{ c.cantidad }}"
+         data-image="{{ tcgapi_base_url }}{{ c.image_url }}">
         {% if c.image_url %}
         <img src="{{ tcgapi_base_url }}{{ c.image_url }}" alt="{{ c.name }}" loading="lazy">
         {% else %}
@@ -43,6 +45,18 @@
         </div>
     </div>
     {% endfor %}
+</div>
+
+<div class="modal fade" id="card-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="card-modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center" id="card-modal-body"></div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

@@ -23,7 +23,7 @@
 
 <div class="pokedex-grid">
     {% for p in pokemon %}
-    <div class="pokedex-tile {{ 'owned' if p.owned else 'missing' }}" title="{{ p.name }}{{ ' — conseguido' if p.owned else ' — falta' }}">
+    <div class="pokedex-tile {{ 'owned' if p.owned else 'missing' }}" data-id="{{ p.id }}" title="{{ p.name }}{{ ' — conseguido' if p.owned else ' — falta' }}">
         {% if p.image_url %}
         <img src="{{ tcgapi_base_url }}{{ p.image_url }}" alt="{{ p.name }}" loading="lazy">
         {% else %}
@@ -33,5 +33,24 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="modal fade" id="pokemon-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="pokemon-modal-title"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center" id="pokemon-modal-body"></div>
+        </div>
+    </div>
+</div>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const TCGAPI_BASE_URL = "{{ tcgapi_base_url }}";
+</script>
+<script src="{{ url_for('static', filename='js/pokedex.js') }}"></script>
 {% endblock %}

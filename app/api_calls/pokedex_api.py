@@ -21,3 +21,12 @@ def search_pokedex(q: str) -> list[dict]:
     )
     response.raise_for_status()
     return response.json()
+
+
+def get_pokemon(pokedex_id: int) -> dict:
+    """Detalle completo de un Pokémon (stats, altura, peso...) para el modal de detalle."""
+    response = requests.get(
+        f"{current_app.config['TCGAPI_BASE_URL']}/pokedex/{pokedex_id}", timeout=10
+    )
+    response.raise_for_status()
+    return response.json()

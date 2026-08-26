@@ -236,6 +236,7 @@ a {
     text-align: center;
     font-size: 0.7rem;
     line-height: 1.2;
+    cursor: pointer;
 }
 
 .pokedex-tile img {
@@ -297,6 +298,10 @@ a {
     position: relative;
     text-align: center;
     transition: transform 0.15s ease;
+}
+
+.collection-grid .card-tile img {
+    cursor: pointer;
 }
 
 .card-tile img {
@@ -371,3 +376,90 @@ a {
     font-size: 0.78rem;
     padding: 0.2rem 0.6rem;
 }
+
+/* ---------- Modal de detalle (carta o Pokémon) ---------- */
+/* El fondo semitransparente ya lo da Bootstrap (.modal-backdrop); solo se
+   oscurece un poco más para que la carta/Pokémon en grande resalte mejor. */
+
+.modal-backdrop {
+    --bs-backdrop-opacity: 0.75;
+}
+
+.modal-title {
+    font-family: "Baloo 2", sans-serif;
+}
+
+.pokemon-modal-img, .card-modal-img {
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: var(--bs-border-radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.pokemon-modal-img.missing {
+    filter: grayscale(100%) brightness(0.7);
+}
+
+/* Barras de estadísticas del Pokémon en el modal */
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
+}
+
+.stat-label {
+    width: 72px;
+    flex-shrink: 0;
+    font-weight: 700;
+    text-align: right;
+}
+
+.stat-bar {
+    flex: 1;
+    height: 0.55rem;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: var(--bs-border-radius-pill);
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    background-image: linear-gradient(90deg, var(--pkmn-yellow), var(--pkmn-red));
+    border-radius: var(--bs-border-radius-pill);
+}
+
+.stat-value {
+    width: 30px;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+/* Insignias de tipo Pokémon, con el color asociado a cada tipo */
+
+.type-badge {
+    color: #fff;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.type-normal { background-color: #a8a878; }
+.type-fire { background-color: #f08030; }
+.type-water { background-color: #6890f0; }
+.type-electric { background-color: #f8d030; color: #262322; }
+.type-grass { background-color: #78c850; }
+.type-ice { background-color: #98d8d8; color: #262322; }
+.type-fighting { background-color: #c03028; }
+.type-poison { background-color: #a040a0; }
+.type-ground { background-color: #e0c068; color: #262322; }
+.type-flying { background-color: #a890f0; }
+.type-psychic { background-color: #f85888; }
+.type-bug { background-color: #a8b820; }
+.type-rock { background-color: #b8a038; }
+.type-ghost { background-color: #705898; }
+.type-dragon { background-color: #7038f8; }
+.type-dark { background-color: #705848; }
+.type-steel { background-color: #b8b8d0; color: #262322; }
+.type-fairy { background-color: #ee99ac; color: #262322; }
