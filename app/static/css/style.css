@@ -526,6 +526,85 @@ a {
     font-family: "Baloo 2", sans-serif;
 }
 
+/* ---------- Administración: rejilla de sets (inglés y por idioma) ---------- */
+/* Sustituye la tabla plana de antes. El logo/símbolo viene de pokemontcg.io
+   (inglés, siempre presente) o tcgdex.dev (por idioma, solo si ese set ya
+   tiene el detalle sincronizado) — si no hay imagen se cae a un icono
+   genérico, para que la rejilla nunca se vea con huecos rotos. */
+
+.set-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.set-tile {
+    background-color: #fff;
+    border-radius: var(--bs-border-radius);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.set-tile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.set-tile-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 84px;
+    padding: 0.75rem 1rem;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(59, 76, 202, 0.08) 0%, transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(238, 21, 21, 0.06) 0%, transparent 55%),
+        var(--pkmn-cream);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+    overflow: hidden;
+}
+
+.set-tile-visual img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.set-tile-symbol-img {
+    max-height: 2.4rem !important;
+}
+
+.set-tile-placeholder-pikachu {
+    width: 3.6rem;
+    height: 3.6rem;
+    opacity: 0.8;
+}
+
+.set-tile-body {
+    padding: 0.65rem 0.85rem 0.85rem;
+}
+
+.set-tile-name {
+    font-family: "Baloo 2", sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    margin-bottom: 0.15rem;
+}
+
+.set-tile-meta {
+    line-height: 1.3;
+}
+
+.set-tile-body .badge {
+    margin-top: 0.5rem;
+    white-space: normal;
+    text-align: left;
+    font-size: 0.68rem;
+}
+
 /* Brillo/rebote al añadir una carta con éxito */
 
 @keyframes just-added {

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import sync_overlay, sync_status_badge, back_button %}
+{% from "_macros.html" import sync_overlay, sync_status_badge, back_button, set_grid %}
 
 {% block title %}Sets ({{ lang }}) · TCG Personal Administrator{% endblock %}
 
@@ -25,28 +25,7 @@
     </div>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Set</th>
-            <th>Serie</th>
-            <th>Cartas</th>
-            <th>Salida</th>
-            <th>Estado</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for s in sets %}
-        <tr>
-            <td>{{ s.name }}</td>
-            <td>{{ s.series or "—" }}</td>
-            <td>{{ s.official_total }}</td>
-            <td>{{ s.release_date or "—" }}</td>
-            <td>{{ sync_status_badge(s.cards_synced_at) }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{{ set_grid(sets) }}
 {% else %}
 <p class="text-muted">Todavía no hay sets sincronizados. Pulsa "Sincronizar lista de sets" para empezar.</p>
 {% endif %}
