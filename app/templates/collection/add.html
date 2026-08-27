@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% from "_macros.html" import back_button %}
 
 {% block title %}Añadir carta · TCG Personal Administrator{% endblock %}
 
 {% block content %}
+{{ back_button(url_for('collection.index'), "Mi colección") }}
 <h1>Añadir carta</h1>
 <p class="lead">Elige el idioma, busca el Pokémon y elige la carta que tienes.</p>
 

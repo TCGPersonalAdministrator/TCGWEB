@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import sync_overlay %}
+{% from "_macros.html" import sync_overlay, back_button %}
 
 {% block title %}Pokédex · Administración{% endblock %}
 
 {% block content %}
+{{ back_button(url_for('admin.index'), "Administración") }}
 <h1>Pokédex</h1>
 <p class="lead">Sincroniza todos los Pokémon desde PokeAPI hacia la base de datos.</p>
 

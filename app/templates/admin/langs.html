@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% from "_macros.html" import back_button %}
 
 {% block title %}Cartas por idioma · TCG Personal Administrator{% endblock %}
 
 {% block content %}
+{{ back_button(url_for('admin.index'), "Administración") }}
 <h1>Cartas por idioma</h1>
 <p class="lead">Elige un idioma para sincronizar sus sets y cartas (catálogo independiente por idioma — tcgdex.dev).</p>
 

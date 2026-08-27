@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% from "_macros.html" import sync_overlay, sync_status_badge %}
+{% from "_macros.html" import sync_overlay, sync_status_badge, back_button %}
 
 {% block title %}Sets ({{ lang }}) · TCG Personal Administrator{% endblock %}
 
 {% block content %}
+{{ back_button(url_for('admin.langs'), "Cambiar idioma") }}
 <h1>Sets y Cartas — {{ lang }}</h1>
 <p class="lead">Primero sincroniza la lista de sets. Después, elige un set del desplegable y actualiza sus cartas de una en una para no saturar la API.</p>
-<p><a href="{{ url_for('admin.langs') }}"><i class="bi bi-arrow-left"></i> Cambiar idioma</a></p>
 
 <button id="btn-sync-sets" type="button" class="btn btn-primary mb-4"><i class="bi bi-arrow-repeat"></i> Sincronizar lista de sets</button>
 

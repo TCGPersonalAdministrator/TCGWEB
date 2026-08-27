@@ -9,6 +9,10 @@
 </div>
 {% endmacro %}
 
+{% macro back_button(url, label="Volver") %}
+<a href="{{ url }}" class="btn btn-back mb-3"><i class="bi bi-arrow-left"></i> {{ label }}</a>
+{% endmacro %}
+
 {% macro sync_status_badge(synced_at) %}
 {% if synced_at %}
 <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Actualizado ({{ synced_at }})</span>

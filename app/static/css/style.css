@@ -144,6 +144,155 @@ a {
     margin-right: 0.3rem;
 }
 
+.btn-back {
+    background-color: transparent;
+    border: 2px solid var(--pkmn-blue);
+    color: var(--pkmn-blue);
+    padding: 0.4rem 1.1rem;
+}
+
+.btn-back:hover {
+    background-color: var(--pkmn-blue);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(59, 76, 202, 0.3);
+}
+
+/* ---------- Formularios (selects, inputs) ---------- */
+
+.form-label {
+    font-weight: 700;
+    color: var(--pkmn-ink);
+    margin-bottom: 0.4rem;
+}
+
+.form-select,
+.form-control {
+    border: 2px solid rgba(59, 76, 202, 0.18);
+    border-radius: var(--bs-border-radius-pill);
+    padding: 0.5rem 1.15rem;
+    font-weight: 600;
+    color: var(--pkmn-ink);
+    background-color: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.form-select {
+    padding-right: 2.5rem;
+}
+
+.form-select:hover,
+.form-control:hover {
+    border-color: var(--pkmn-blue);
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--pkmn-yellow-dark);
+    box-shadow: 0 0 0 4px rgba(255, 203, 5, 0.35);
+}
+
+.input-group-text {
+    border: 2px solid rgba(59, 76, 202, 0.18);
+    background-color: #fff;
+    color: var(--pkmn-blue);
+    font-weight: 700;
+}
+
+.input-group {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: var(--bs-border-radius-pill);
+}
+
+.input-group > .form-control,
+.input-group > .form-select,
+.input-group > .input-group-text {
+    box-shadow: none;
+}
+
+/* ---------- Select personalizado ----------
+   El <select> nativo se mantiene en el DOM (oculto, sin puntero) para
+   conservar su valor/submit/accesibilidad básica; encima se pinta un
+   desplegable propio con el mismo look que el resto de la app (píldora +
+   list-group con hover amarillo), evitando el rectángulo y el azul de
+   sistema del <option> nativo. Ver static/js/custom-select.js. */
+
+.custom-select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-right: 1.15rem;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+}
+
+.custom-select-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.custom-select-caret {
+    flex-shrink: 0;
+    margin-left: 0.6rem;
+    color: var(--pkmn-blue);
+    font-size: 0.85rem;
+    transition: transform 0.15s ease;
+}
+
+.custom-select.open .custom-select-caret {
+    transform: rotate(180deg);
+}
+
+.custom-select-native {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.custom-select-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    min-width: 100%;
+    width: max-content;
+    max-width: min(90vw, 480px);
+    z-index: 1000;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+    padding: 0.4rem;
+    margin: 0;
+    background-color: #fff;
+    border: 2px solid rgba(59, 76, 202, 0.18);
+    border-radius: var(--bs-border-radius-lg);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.custom-select-menu.show {
+    display: block;
+}
+
+.custom-select-option {
+    width: 100%;
+    text-align: left;
+    border-radius: var(--bs-border-radius) !important;
+}
+
+.custom-select-option.highlighted {
+    border-color: var(--pkmn-yellow) !important;
+    transform: translateX(4px);
+}
+
+.custom-select-option.active {
+    background-color: var(--pkmn-red) !important;
+    border-color: var(--pkmn-red) !important;
+    color: #fff !important;
+}
+
 /* ---------- Tarjetas / list-group ---------- */
 
 .list-group-item-action {
