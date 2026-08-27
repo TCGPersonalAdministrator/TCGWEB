@@ -193,4 +193,20 @@ function enhanceAllSelects() {
     document.querySelectorAll("select.form-select").forEach(buildCustomSelect);
 }
 
+// Reconstruye el desplegable personalizado de un <select> cuyas <option> se
+// acaban de reemplazar por JS (ej. la lista de sets cambia según el idioma
+// elegido) — deshace el envoltorio anterior y vuelve a construirlo desde cero.
+function refreshCustomSelect(select) {
+    const wrapper = select.closest(".custom-select");
+    if (wrapper && wrapper.parentNode) {
+        wrapper.parentNode.insertBefore(select, wrapper);
+        wrapper.remove();
+    }
+    select.classList.remove("custom-select-native");
+    select.removeAttribute("tabindex");
+    select.removeAttribute("aria-hidden");
+    select.removeAttribute("style");
+    buildCustomSelect(select);
+}
+
 document.addEventListener("DOMContentLoaded", enhanceAllSelects);

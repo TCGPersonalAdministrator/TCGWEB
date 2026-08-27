@@ -6,8 +6,11 @@ from app.api_calls.collection_api import (
     list_all_languages,
     list_owned_cards,
     list_pokemon_cards,
+    lookup_cards_by_code,
 )
+from app.api_calls.lang_sets_api import list_lang_sets
 from app.api_calls.pokedex_api import search_pokedex
+from app.api_calls.sets_api import list_sets
 
 collection_bp = Blueprint("collection", __name__, url_prefix="/collection")
 
@@ -41,7 +44,25 @@ def add_pokemon_cards(pokedex_id):
     lang = request.args.get("lang", "")
     if not lang:
         return jsonify({"error": "falta el idioma"}), 400
-    return jsonify(list_pokemon_cards(pokedex_id, lang))
+    set_id = request.args.get("set", "")
+    return jsonify(list_pokemon_cards(pokedex_id, lang, set_id or None))
+
+
+@collection_bp.route("/add/sets", methods=["GET"])
+def add_sets():
+    lang = request.args.get("lang", "en")
+    sets = list_sets() if lang == "en" else list_lang_sets(lang)
+    return jsonify([{"id": s["id"], "name": s["name"]} for s in sets])
+
+
+@collection_bp.route("/add/lookup-card", methods=["GET"])
+def add_lookup_card():
+    lang = request.args.get("lang", "")
+    code = request.args.get("code", "").strip()
+    number = request.args.get("number", "").strip()
+    if not lang or not code or not number:
+        return jsonify({"error": "faltan lang, code o number"}), 400
+    return jsonify(lookup_cards_by_code(lang, code, number))
 
 
 @collection_bp.route("/add/card", methods=["POST"])

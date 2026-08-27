@@ -10,10 +10,23 @@ def list_all_languages() -> list[dict]:
     return [{"code": "en", "name": "Inglés"}] + list_tcgdex_languages()
 
 
-def list_pokemon_cards(pokedex_id: int, lang: str) -> list[dict]:
+def list_pokemon_cards(pokedex_id: int, lang: str, set_id: str | None = None) -> list[dict]:
+    params = {"lang": lang}
+    if set_id:
+        params["set"] = set_id
     response = requests.get(
         f"{current_app.config['TCGAPI_BASE_URL']}/pokedex/{pokedex_id}/cards",
-        params={"lang": lang},
+        params=params,
+        timeout=10,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def lookup_cards_by_code(lang: str, code: str, number: str) -> list[dict]:
+    response = requests.get(
+        f"{current_app.config['TCGAPI_BASE_URL']}/cards/lookup",
+        params={"lang": lang, "code": code, "number": number},
         timeout=10,
     )
     response.raise_for_status()

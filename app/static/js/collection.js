@@ -22,8 +22,13 @@ function debounce(fn, delayMs) {
     };
 }
 
+// Detecta un código de carta tipo "DRI 116" o "DRI-116" (código corto del
+// set + número impreso) para saltarse el buscador de Pokémon.
+const CARD_CODE_PATTERN = /^([a-z0-9]{2,10})[\s-]+(\d{1,4}[a-z]?)$/i;
+
 function initCollectionAdd() {
     const langSelect = document.getElementById("add-lang");
+    const setSelect = document.getElementById("add-set");
     const pokemonInput = document.getElementById("add-pokemon-search");
     const pokemonResults = document.getElementById("add-pokemon-results");
     const cardsSection = document.getElementById("add-cards-section");
@@ -34,10 +39,19 @@ function initCollectionAdd() {
     if (!pokemonInput) return;
 
     let selectedPokemon = null;
+    let lastCode = null;
 
     const runSearch = debounce((q) => {
         if (!q) {
             pokemonResults.innerHTML = "";
+            return;
+        }
+        const codeMatch = q.match(CARD_CODE_PATTERN);
+        if (codeMatch) {
+            pokemonResults.innerHTML = "";
+            selectedPokemon = null;
+            lastCode = { code: codeMatch[1], number: codeMatch[2] };
+            loadCardsByCode(lastCode);
             return;
         }
         fetch(`/collection/add/search-pokemon?q=${encodeURIComponent(q)}`)
@@ -50,9 +64,34 @@ function initCollectionAdd() {
 
     pokemonInput.addEventListener("input", (e) => runSearch(e.target.value.trim()));
 
-    langSelect.addEventListener("change", () => {
+    function reloadCurrent() {
         if (selectedPokemon) loadCards(selectedPokemon);
+        else if (lastCode) loadCardsByCode(lastCode);
+    }
+
+    function loadSetOptions(lang) {
+        return fetch(`/collection/add/sets?lang=${encodeURIComponent(lang)}`)
+            .then((r) => r.json())
+            .then((sets) => {
+                setSelect.innerHTML = '<option value="">Todos los sets</option>';
+                sets.forEach((s) => {
+                    const opt = document.createElement("option");
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    setSelect.appendChild(opt);
+                });
+                refreshCustomSelect(setSelect);
+            })
+            .catch(() => {});
+    }
+
+    langSelect.addEventListener("change", () => {
+        loadSetOptions(langSelect.value).then(reloadCurrent);
     });
+
+    setSelect.addEventListener("change", reloadCurrent);
+
+    loadSetOptions(langSelect.value);
 
     function renderPokemonResults(pokemon) {
         pokemonResults.innerHTML = "";
@@ -64,6 +103,7 @@ function initCollectionAdd() {
             item.innerHTML = `${img}<span>#${p.id} ${p.name}</span>`;
             item.addEventListener("click", () => {
                 selectedPokemon = p;
+                lastCode = null;
                 pokemonInput.value = p.name;
                 pokemonResults.innerHTML = "";
                 loadCards(p);
@@ -74,16 +114,39 @@ function initCollectionAdd() {
 
     function loadCards(pokemon) {
         const lang = langSelect.value;
+        const setId = setSelect.value;
         cardsSection.classList.remove("d-none");
         cardsTitle.textContent = `Cartas de ${pokemon.name}...`;
         cardsGrid.innerHTML = "";
 
-        fetch(`/collection/add/pokemon/${pokemon.id}/cards?lang=${encodeURIComponent(lang)}`)
+        const url = new URL(`/collection/add/pokemon/${pokemon.id}/cards`, window.location.origin);
+        url.searchParams.set("lang", lang);
+        if (setId) url.searchParams.set("set", setId);
+
+        fetch(url)
             .then((r) => r.json())
             .then((cards) => {
                 cardsTitle.textContent = `Cartas de ${pokemon.name} (${langSelect.selectedOptions[0].textContent})`;
                 if (!cards.length) {
                     cardsGrid.innerHTML = '<p class="text-muted">No hay cartas de este Pokémon en este idioma todavía.</p>';
+                    return;
+                }
+                cards.forEach((c) => cardsGrid.appendChild(buildCardTile(c, lang)));
+            });
+    }
+
+    function loadCardsByCode({ code, number }) {
+        const lang = langSelect.value;
+        cardsSection.classList.remove("d-none");
+        cardsTitle.textContent = `Buscando "${code.toUpperCase()} ${number}"...`;
+        cardsGrid.innerHTML = "";
+
+        fetch(`/collection/add/lookup-card?lang=${encodeURIComponent(lang)}&code=${encodeURIComponent(code)}&number=${encodeURIComponent(number)}`)
+            .then((r) => r.json())
+            .then((cards) => {
+                cardsTitle.textContent = `Resultado para "${code.toUpperCase()} ${number}" (${langSelect.selectedOptions[0].textContent})`;
+                if (!cards.length) {
+                    cardsGrid.innerHTML = '<p class="text-muted">No se encontró ninguna carta con ese código en este idioma.</p>';
                     return;
                 }
                 cards.forEach((c) => cardsGrid.appendChild(buildCardTile(c, lang)));
