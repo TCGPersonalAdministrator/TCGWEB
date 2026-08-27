@@ -1,10 +1,6 @@
-const POKEMON_TYPE_LABELS = {
-    normal: "Normal", fire: "Fuego", water: "Agua", electric: "Eléctrico",
-    grass: "Planta", ice: "Hielo", fighting: "Lucha", poison: "Veneno",
-    ground: "Tierra", flying: "Volador", psychic: "Psíquico", bug: "Bicho",
-    rock: "Roca", ghost: "Fantasma", dragon: "Dragón", dark: "Siniestro",
-    steel: "Acero", fairy: "Hada",
-};
+function typeLabel(typeCode) {
+    return t(`type.${typeCode}`);
+}
 
 function initPokedexModal() {
     const grid = document.querySelector(".pokedex-grid");
@@ -21,7 +17,7 @@ function initPokedexModal() {
     });
 
     function openPokemonModal(id) {
-        titleEl.textContent = "Cargando...";
+        titleEl.textContent = t("pokedex.loading");
         bodyEl.innerHTML = '<div class="spinner-border" role="status"></div>';
         modal.show();
 
@@ -29,7 +25,7 @@ function initPokedexModal() {
             .then((r) => r.json())
             .then(renderPokemon)
             .catch(() => {
-                bodyEl.innerHTML = '<p class="text-danger">No se pudo cargar el Pokémon.</p>';
+                bodyEl.innerHTML = `<p class="text-danger">${t("pokedex.load_error")}</p>`;
             });
     }
 
@@ -48,17 +44,17 @@ function initPokedexModal() {
         titleEl.textContent = `#${p.id} ${p.name}`;
 
         const statusBadge = p.owned
-            ? '<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Conseguido</span>'
-            : '<span class="badge bg-secondary"><i class="bi bi-question-circle-fill"></i> Aún no lo tienes</span>';
+            ? `<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> ${t("pokedex.owned_badge")}</span>`
+            : `<span class="badge bg-secondary"><i class="bi bi-question-circle-fill"></i> ${t("pokedex.missing_badge")}</span>`;
 
         const types = [p.type_1, p.type_2]
             .filter(Boolean)
-            .map((t) => `<span class="badge type-badge type-${t}">${POKEMON_TYPE_LABELS[t] || t}</span>`)
+            .map((typeCode) => `<span class="badge type-badge type-${typeCode}">${typeLabel(typeCode)}</span>`)
             .join(" ");
 
         const stats = [
-            ["PS", p.hp], ["Ataque", p.attack], ["Defensa", p.defense],
-            ["At. Esp.", p.special_attack], ["Def. Esp.", p.special_defense], ["Velocidad", p.speed],
+            [t("stat.hp"), p.hp], [t("stat.attack"), p.attack], [t("stat.defense"), p.defense],
+            [t("stat.special_attack"), p.special_attack], [t("stat.special_defense"), p.special_defense], [t("stat.speed"), p.speed],
         ].map(([label, value]) => statRow(label, value)).join("");
 
         const img = p.image_url
@@ -72,7 +68,7 @@ function initPokedexModal() {
             ${p.genus_es ? `<p class="text-muted mb-2">${p.genus_es}</p>` : ""}
             <div class="pokemon-stats text-start mx-auto" style="max-width: 320px;">${stats}</div>
             <p class="text-muted small mt-3 mb-0">
-                Altura: ${(p.height / 10).toFixed(1)} m &middot; Peso: ${(p.weight / 10).toFixed(1)} kg${p.generation ? " &middot; " + p.generation : ""}
+                ${t("pokedex.height_weight", { height: (p.height / 10).toFixed(1), weight: (p.weight / 10).toFixed(1) })}${p.generation ? " &middot; " + p.generation : ""}
             </p>
         `;
     }

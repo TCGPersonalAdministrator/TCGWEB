@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% from "_macros.html" import lang_flag %}
 
-{% block title %}Mi colección · TCG Personal Administrator{% endblock %}
+{% block title %}{{ t('collection.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h1 class="mb-0">Mi colección</h1>
-    <a href="{{ url_for('collection.add') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Añadir carta</a>
+    <h1 class="mb-0">{{ t('collection.title') }}</h1>
+    <a href="{{ url_for('collection.add') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> {{ t('collection.add_button') }}</a>
 </div>
 
 <form method="get" class="mb-4" style="max-width: 260px;">
-    <label for="lang-filter" class="form-label">Filtrar por idioma</label>
+    <label for="lang-filter" class="form-label">{{ t('collection.filter_lang') }}</label>
     <select id="lang-filter" name="lang" class="form-select" onchange="this.form.submit()">
-        <option value="">Todos</option>
+        <option value="">{{ t('collection.filter_all') }}</option>
         {% for l in languages %}
-        <option value="{{ l.code }}" {{ "selected" if l.code == selected_lang else "" }}>{{ l.name }}</option>
+        <option value="{{ l.code }}" {{ "selected" if l.code == selected_lang else "" }}>{{ catalog_lang_name(l.code) }}</option>
         {% endfor %}
     </select>
 </form>
 
 {% if not cards %}
-<p class="text-muted" id="empty-collection-msg">Todavía no tienes ninguna carta registrada.</p>
+<p class="text-muted" id="empty-collection-msg">{{ t('collection.empty') }}</p>
 {% else %}
-<p class="text-muted" id="collection-count">{{ cards | length }} carta{{ "s" if cards | length != 1 else "" }} distinta{{ "s" if cards | length != 1 else "" }}.</p>
+<p class="text-muted" id="collection-count">{{ t('collection.count_one') if cards | length == 1 else t('collection.count_other', n=cards | length) }}</p>
 {% endif %}
 <div class="card-grid collection-grid" id="collection-grid">
     {% for c in cards %}
@@ -44,7 +44,7 @@
             <div class="card-tile-name">{{ c.name }}</div>
             <div class="card-tile-set text-muted small">{{ c.set_name }}</div>
             <button type="button" class="btn btn-sm btn-outline-danger btn-delete-card mt-1" data-id="{{ c.id }}">
-                <i class="bi bi-trash3-fill"></i> Eliminar
+                <i class="bi bi-trash3-fill"></i> {{ t('card.delete') }}
             </button>
         </div>
     </div>
@@ -56,7 +56,7 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="card-modal-title"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t('app.close') }}"></button>
             </div>
             <div class="modal-body text-center" id="card-modal-body"></div>
         </div>

@@ -97,6 +97,26 @@ a {
     margin-right: 0.25rem;
 }
 
+/* ---------- Selector de idioma de la interfaz (navbar) ---------- */
+
+.nav-lang-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    margin-left: 0.4rem;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    line-height: 0;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.nav-lang-btn:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+}
+
 /* Pokéball dibujada solo con CSS — icono de marca, sin necesitar assets binarios */
 
 .pokeball-icon {

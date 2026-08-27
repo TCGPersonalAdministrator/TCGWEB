@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 {% from "_macros.html" import back_button %}
 
-{% block title %}Añadir carta · TCG Personal Administrator{% endblock %}
+{% block title %}{{ t('add.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
-{{ back_button(url_for('collection.index'), "Mi colección") }}
-<h1>Añadir carta</h1>
-<p class="lead">Elige el idioma, busca el Pokémon (o escribe directamente el código de la carta, ej. "DRI 116") y elige la carta que tienes.</p>
+{{ back_button(url_for('collection.index'), t('nav.collection')) }}
+<h1>{{ t('add.title') }}</h1>
+<p class="lead">{{ t('add.lead') }}</p>
 
 <div class="row g-3 mb-4">
     <div class="col-auto">
-        <label for="add-lang" class="form-label">1. Idioma</label>
+        <label for="add-lang" class="form-label">{{ t('add.step1_lang') }}</label>
         <select id="add-lang" class="form-select">
             {% for l in languages %}
-            <option value="{{ l.code }}">{{ l.name }}</option>
+            <option value="{{ l.code }}">{{ catalog_lang_name(l.code) }}</option>
             {% endfor %}
         </select>
     </div>
     <div class="col-auto" style="min-width: 240px;">
-        <label for="add-set" class="form-label">2. Set (opcional)</label>
+        <label for="add-set" class="form-label">{{ t('add.step2_set') }}</label>
         <select id="add-set" class="form-select">
-            <option value="">Todos los sets</option>
+            <option value="">{{ t('add.all_sets') }}</option>
         </select>
     </div>
     <div class="col-auto" style="min-width: 280px;">
-        <label for="add-pokemon-search" class="form-label">3. Pokémon o código</label>
+        <label for="add-pokemon-search" class="form-label">{{ t('add.step3_pokemon') }}</label>
         <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input id="add-pokemon-search" type="text" class="form-control" placeholder="Ej. charizard o DRI 116" autocomplete="off">
+            <input id="add-pokemon-search" type="text" class="form-control" placeholder="{{ t('add.search_placeholder') }}" autocomplete="off">
         </div>
         <div id="add-pokemon-results" class="list-group position-absolute" style="z-index: 1000; max-width: 280px;"></div>
     </div>

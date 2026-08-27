@@ -19,7 +19,7 @@ function showSyncBanner(message, type) {
     const banner = document.getElementById("sync-result-banner");
     if (!banner) return;
     const icon = type === "success" ? "bi-check-circle-fill" : type === "warning" ? "bi-exclamation-circle-fill" : "bi-exclamation-triangle-fill";
-    banner.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert"><i class="bi ${icon}"></i> ${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
+    banner.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert"><i class="bi ${icon}"></i> ${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${t("app.close")}"></button></div>`;
 }
 
 // Convierte una duración en milisegundos a un texto legible, mostrando solo
@@ -30,22 +30,26 @@ function formatDuration(ms) {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    if (hours > 0) return `${hours} h ${minutes} min`;
-    if (minutes > 0) return `${minutes} min ${seconds} s`;
-    if (totalSeconds > 0) return `${totalSeconds} s`;
+    if (hours > 0) return t("time.hours_minutes", { h: hours, m: minutes });
+    if (minutes > 0) return t("time.minutes_seconds", { m: minutes, s: seconds });
+    if (totalSeconds > 0) return t("time.seconds", { s: totalSeconds });
     return `${ms} ms`;
 }
 
 function buildSyncResultMessage(result) {
     const parts = [];
     if (result.inserted !== undefined) {
-        parts.push(`${result.inserted} nuevos`, `${result.updated} actualizados`, `${result.unchanged} sin cambios`);
-        if (result.failed) parts.push(`${result.failed} fallidos`);
+        parts.push(
+            `${result.inserted} ${t("sync.new")}`,
+            `${result.updated} ${t("sync.updated_count")}`,
+            `${result.unchanged} ${t("sync.unchanged")}`
+        );
+        if (result.failed) parts.push(`${result.failed} ${t("sync.failed_count")}`);
     }
-    let msg = "Sincronización completada: " + parts.join(", ");
-    if (result.duration_ms !== undefined) msg += ` en ${formatDuration(result.duration_ms)}.`;
+    let msg = t("sync.completed") + parts.join(", ");
+    if (result.duration_ms !== undefined) msg += t("sync.duration_prefix") + formatDuration(result.duration_ms) + ".";
     if (result.failed_pages && result.failed_pages.length) {
-        msg += ` Páginas que fallaron y se saltaron: ${JSON.stringify(result.failed_pages)} (vuelve a sincronizar para reintentarlas).`;
+        msg += t("sync.failed_pages", { pages: JSON.stringify(result.failed_pages) });
     }
     return msg;
 }
@@ -53,25 +57,25 @@ function buildSyncResultMessage(result) {
 // Arranca una sincronización (POST a startUrl) y muestra el overlay con el progreso
 // en vivo (polling a /sync-status) hasta que termine. onDone(status) se llama al acabar.
 function runSync(startUrl, onDone) {
-    showSyncOverlay("Iniciando sincronización...");
+    showSyncOverlay(t("sync.starting"));
 
     fetch(startUrl, { method: "POST" })
         .then((resp) => {
             if (resp.status === 409) {
                 hideSyncOverlay();
-                showSyncBanner("Ya hay una sincronización en curso, espera a que termine.", "warning");
+                showSyncBanner(t("sync.already_running"), "warning");
                 return;
             }
             if (!resp.ok) {
                 hideSyncOverlay();
-                showSyncBanner("No se pudo iniciar la sincronización.", "danger");
+                showSyncBanner(t("sync.start_failed"), "danger");
                 return;
             }
             pollSyncStatus(onDone);
         })
         .catch(() => {
             hideSyncOverlay();
-            showSyncBanner("No se pudo conectar con el servidor para iniciar la sincronización.", "danger");
+            showSyncBanner(t("sync.connection_failed"), "danger");
         });
 }
 
@@ -82,14 +86,14 @@ function pollSyncStatus(onDone) {
             if (status.running) {
                 const total = status.total || 0;
                 const current = status.current || 0;
-                updateSyncOverlayText(total > 0 ? `Sincronizando... ${current}/${total}` : "Sincronizando...");
+                updateSyncOverlayText(total > 0 ? t("sync.progress", { current, total }) : t("sync.in_progress"));
                 setTimeout(() => pollSyncStatus(onDone), 700);
                 return;
             }
 
             hideSyncOverlay();
             if (status.error) {
-                showSyncBanner("Error: " + status.error, "danger");
+                showSyncBanner(t("sync.error_prefix") + status.error, "danger");
             } else if (status.result) {
                 showSyncBanner(buildSyncResultMessage(status.result), "success");
             }

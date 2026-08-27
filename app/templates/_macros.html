@@ -4,22 +4,20 @@
 <div id="sync-overlay" class="sync-overlay d-none">
     <div class="sync-overlay-content">
         <div class="spinner-border text-light mb-3" role="status"></div>
-        <div id="sync-overlay-text">Sincronizando...</div>
+        <div id="sync-overlay-text">{{ t('sync.in_progress') }}</div>
     </div>
 </div>
 {% endmacro %}
 
-{% macro back_button(url, label="Volver") %}
-<a href="{{ url }}" class="btn btn-back mb-3"><i class="bi bi-arrow-left"></i> {{ label }}</a>
+{% macro back_button(url, label=None) %}
+<a href="{{ url }}" class="btn btn-back mb-3"><i class="bi bi-arrow-left"></i> {{ label or t('back.default_label') }}</a>
 {% endmacro %}
 
 {# Banderas dibujadas a mano en SVG (sin depender de la fuente de emoji del
    sistema — en Windows los emoji de bandera no siempre se combinan y se ven
    como dos letras sueltas, ej. "JP" en vez de 🇯🇵). #}
-{% set lang_flag_labels = {"en": "Inglés", "es": "Español", "ja": "Japonés", "ko": "Coreano", "zh_cn": "Chino simplificado"} %}
-
 {% macro lang_flag(idioma) %}
-<span class="card-tile-flag" title="{{ lang_flag_labels.get(idioma, idioma) }}">
+<span class="card-tile-flag" title="{{ catalog_lang_name(idioma) }}">
     {% if idioma == "en" %}
     <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="60" height="40" fill="#00247d"/>
@@ -56,11 +54,43 @@
 </span>
 {% endmacro %}
 
+{# Banderas del selector de IDIOMA DE LA INTERFAZ (navbar) — concepto
+   distinto de lang_flag() de arriba, que es el idioma del catálogo de
+   cartas. Solo 3 idiomas soportados: en/es/pt. #}
+{% macro ui_lang_flag(code) %}
+<span class="card-tile-flag" aria-hidden="true">
+    {% if code == "en" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="60" height="40" fill="#00247d"/>
+        <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+        <path d="M0,0 L27,18 M0,40 L27,22 M60,0 L33,18 M60,40 L33,22" stroke="#cf142b" stroke-width="4"/>
+        <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+        <path d="M30,0 V40 M0,20 H60" stroke="#cf142b" stroke-width="7"/>
+    </svg>
+    {% elif code == "es" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="60" height="40" fill="#aa151b"/>
+        <rect y="10" width="60" height="20" fill="#f1bf00"/>
+    </svg>
+    {% elif code == "pt" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="60" height="40" fill="#ff0000"/>
+        <rect width="24" height="40" fill="#046a38"/>
+        <circle cx="24" cy="20" r="10" fill="#ffcc00"/>
+        <circle cx="24" cy="20" r="6.5" fill="#fff"/>
+        <circle cx="24" cy="20" r="3" fill="#ff0000"/>
+    </svg>
+    {% else %}
+    <i class="bi bi-flag-fill"></i>
+    {% endif %}
+</span>
+{% endmacro %}
+
 {% macro sync_status_badge(synced_at) %}
 {% if synced_at %}
-<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Actualizado ({{ synced_at }})</span>
+<span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> {{ t('sync.updated_at', date=synced_at) }}</span>
 {% else %}
-<span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Sin actualizar</span>
+<span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> {{ t('sync.not_updated') }}</span>
 {% endif %}
 {% endmacro %}
 
@@ -109,7 +139,7 @@
         <div class="set-tile-body">
             <div class="set-tile-name">{{ s.name }}</div>
             <div class="set-tile-meta text-muted small">{{ s.series or "—" }}</div>
-            <div class="set-tile-meta text-muted small">{{ s.printed_total or s.official_total }} cartas · {{ s.release_date or "—" }}</div>
+            <div class="set-tile-meta text-muted small">{{ t('admin_sets.cards_count', n=(s.printed_total or s.official_total)) }} · {{ s.release_date or "—" }}</div>
             {{ sync_status_badge(s.cards_synced_at) }}
         </div>
     </div>

@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Administración · TCG Personal Administrator{% endblock %}
+{% block title %}{{ t('admin.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
-<h1>Administración</h1>
-<p class="lead">Gestión y sincronización de datos con las fuentes externas.</p>
+<h1>{{ t('admin.title') }}</h1>
+<p class="lead">{{ t('admin.lead') }}</p>
 
 <div class="list-group" style="max-width: 500px;">
     <a href="{{ url_for('admin.pokedex') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3">
         <i class="bi bi-grid-3x3-gap-fill fs-4 text-primary"></i>
         <div>
-            <strong>Pokédex</strong>
-            <div class="text-muted small">Sincronizar todos los Pokémon desde PokeAPI</div>
+            <strong>{{ t('admin.item_pokedex_title') }}</strong>
+            <div class="text-muted small">{{ t('admin.item_pokedex_desc') }}</div>
         </div>
     </a>
     <a href="{{ url_for('admin.sets') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3">
         <i class="bi bi-collection-fill fs-4 text-primary"></i>
         <div>
-            <strong>Sets y Cartas (inglés)</strong>
-            <div class="text-muted small">Sincronizar la lista de sets y las cartas de cada set, uno a uno</div>
+            <strong>{{ t('admin.item_sets_title') }}</strong>
+            <div class="text-muted small">{{ t('admin.item_sets_desc') }}</div>
         </div>
     </a>
     <a href="{{ url_for('admin.langs') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3">
         <i class="bi bi-translate fs-4 text-primary"></i>
         <div>
-            <strong>Cartas por idioma</strong>
-            <div class="text-muted small">Español, japonés, coreano, chino simplificado — catálogo independiente por idioma</div>
+            <strong>{{ t('admin.item_langs_title') }}</strong>
+            <div class="text-muted small">{{ t('admin.item_langs_desc') }}</div>
         </div>
     </a>
 </div>

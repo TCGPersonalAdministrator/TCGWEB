@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 {% from "_macros.html" import sync_overlay, sync_status_badge, back_button, set_grid %}
 
-{% block title %}Sets y Cartas · TCG Personal Administrator{% endblock %}
+{% block title %}{{ t('admin_sets.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
-{{ back_button(url_for('admin.index'), "Administración") }}
-<h1>Sets y Cartas</h1>
-<p class="lead">Primero sincroniza la lista de sets. Después, elige un set del desplegable y actualiza sus cartas de una en una para no saturar la API.</p>
+{{ back_button(url_for('admin.index'), t('nav.admin')) }}
+<h1>{{ t('admin_sets.title') }}</h1>
+<p class="lead">{{ t('admin_sets.lead') }}</p>
 
-<button id="btn-sync-sets" type="button" class="btn btn-primary mb-4"><i class="bi bi-arrow-repeat"></i> Sincronizar lista de sets</button>
+<button id="btn-sync-sets" type="button" class="btn btn-primary mb-4"><i class="bi bi-arrow-repeat"></i> {{ t('admin_sets.sync_list_btn') }}</button>
 
 <div id="sync-result-banner" class="mb-3"></div>
 
 {% if sets %}
 <div class="mb-4">
-    <label for="set-select" class="form-label">Actualizar cartas de un set</label>
+    <label for="set-select" class="form-label">{{ t('admin_sets.update_set_label') }}</label>
     <div class="input-group" style="max-width: 600px;">
         <select id="set-select" class="form-select">
             {% for s in sets %}
-            <option value="{{ s.id }}">{{ s.name }} ({{ s.series }}) — {{ s.printed_total }} cartas</option>
+            <option value="{{ s.id }}">{{ s.name }} ({{ s.series }}) — {{ t('admin_sets.cards_count', n=s.printed_total) }}</option>
             {% endfor %}
         </select>
-        <button id="btn-sync-set-cards" type="button" class="btn btn-primary"><i class="bi bi-cloud-arrow-down-fill"></i> Actualizar</button>
+        <button id="btn-sync-set-cards" type="button" class="btn btn-primary"><i class="bi bi-cloud-arrow-down-fill"></i> {{ t('admin_sets.update_btn') }}</button>
     </div>
 </div>
 
 {{ set_grid(sets) }}
 {% else %}
-<p class="text-muted">Todavía no hay sets sincronizados. Pulsa "Sincronizar lista de sets" para empezar.</p>
+<p class="text-muted">{{ t('admin_sets.empty') }}</p>
 {% endif %}
 
 {{ sync_overlay() }}

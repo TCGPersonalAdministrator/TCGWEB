@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Pokédex · TCG Personal Administrator{% endblock %}
+{% block title %}{{ t('pokedex.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
-<h1>Pokédex</h1>
+<h1>{{ t('pokedex.title') }}</h1>
 
 {% if not pokemon %}
 <p class="text-muted">
-    Todavía no hay datos de la Pokédex. Sincronízala primero desde
-    <a href="{{ url_for('admin.pokedex') }}">Administración</a>.
+    {{ t('pokedex.no_data') }}
+    <a href="{{ url_for('admin.pokedex') }}">{{ t('nav.admin') }}</a>.
 </p>
 {% else %}
 {% set owned_count = pokemon | selectattr("owned") | list | length %}
 {% set total = pokemon | length %}
 <p class="lead">
-    Reto del coleccionista: al menos 1 carta de cada Pokémon —
-    <strong>{{ owned_count }} / {{ total }}</strong> conseguidos.
+    {{ t('pokedex.challenge') }}
+    <strong>{{ owned_count }} / {{ total }}</strong> {{ t('pokedex.achieved') }}
 </p>
 <div class="progress mb-4" role="progressbar" aria-valuenow="{{ owned_count }}" aria-valuemin="0" aria-valuemax="{{ total }}">
     <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ (owned_count / total * 100) | round(1) }}%"></div>
@@ -23,7 +23,7 @@
 
 <div class="pokedex-grid">
     {% for p in pokemon %}
-    <div class="pokedex-tile {{ 'owned' if p.owned else 'missing' }}" data-id="{{ p.id }}" title="{{ p.name }}{{ ' — conseguido' if p.owned else ' — falta' }}">
+    <div class="pokedex-tile {{ 'owned' if p.owned else 'missing' }}" data-id="{{ p.id }}" title="{{ p.name }}{{ t('pokedex.owned_suffix') if p.owned else t('pokedex.missing_suffix') }}">
         {% if p.image_url %}
         <img src="{{ tcgapi_base_url }}{{ p.image_url }}" alt="{{ p.name }}" loading="lazy">
         {% else %}
@@ -39,7 +39,7 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="pokemon-modal-title"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ t('app.close') }}"></button>
             </div>
             <div class="modal-body text-center" id="pokemon-modal-body"></div>
         </div>

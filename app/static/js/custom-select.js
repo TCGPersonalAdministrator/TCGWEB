@@ -22,7 +22,7 @@ function buildCustomSelect(select) {
     const search = document.createElement("input");
     search.type = "text";
     search.className = "custom-select-search";
-    search.placeholder = "Buscar...";
+    search.placeholder = t("select.search_placeholder");
     search.autocomplete = "off";
     search.spellcheck = false;
     searchWrap.appendChild(search);
@@ -32,7 +32,7 @@ function buildCustomSelect(select) {
 
     const empty = document.createElement("div");
     empty.className = "custom-select-empty text-muted small d-none";
-    empty.textContent = "Sin resultados.";
+    empty.textContent = t("select.no_results");
 
     menu.appendChild(searchWrap);
     menu.appendChild(list);

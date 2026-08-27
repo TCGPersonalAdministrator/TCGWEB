@@ -6,12 +6,10 @@ const LANG_FLAG_SVGS = {
     zh_cn: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#de2910"/><polygon points="10,4 11.35,8.14 15.71,8.15 12.19,10.71 13.53,14.85 10,12.3 6.47,14.85 7.81,10.71 4.29,8.15 8.65,8.14" fill="#ffde00"/></svg>`,
 };
 
-const LANG_LABELS = { en: "Inglés", es: "Español", ja: "Japonés", ko: "Coreano", zh_cn: "Chino simplificado" };
-
 function langFlagHtml(idioma, className = "card-tile-flag") {
     const svg = LANG_FLAG_SVGS[idioma];
     if (!svg) return "";
-    return `<span class="${className}" title="${LANG_LABELS[idioma] || idioma}">${svg}</span>`;
+    return `<span class="${className}" title="${t("catalog_lang." + idioma) || idioma}">${svg}</span>`;
 }
 
 function debounce(fn, delayMs) {
@@ -73,7 +71,7 @@ function initCollectionAdd() {
         return fetch(`/collection/add/sets?lang=${encodeURIComponent(lang)}`)
             .then((r) => r.json())
             .then((sets) => {
-                setSelect.innerHTML = '<option value="">Todos los sets</option>';
+                setSelect.innerHTML = `<option value="">${t("add.all_sets")}</option>`;
                 sets.forEach((s) => {
                     const opt = document.createElement("option");
                     opt.value = s.id;
@@ -116,7 +114,7 @@ function initCollectionAdd() {
         const lang = langSelect.value;
         const setId = setSelect.value;
         cardsSection.classList.remove("d-none");
-        cardsTitle.textContent = `Cartas de ${pokemon.name}...`;
+        cardsTitle.textContent = t("add.loading_cards", { name: pokemon.name });
         cardsGrid.innerHTML = "";
 
         const url = new URL(`/collection/add/pokemon/${pokemon.id}/cards`, window.location.origin);
@@ -126,9 +124,9 @@ function initCollectionAdd() {
         fetch(url)
             .then((r) => r.json())
             .then((cards) => {
-                cardsTitle.textContent = `Cartas de ${pokemon.name} (${langSelect.selectedOptions[0].textContent})`;
+                cardsTitle.textContent = t("add.cards_of", { name: pokemon.name, lang: langSelect.selectedOptions[0].textContent });
                 if (!cards.length) {
-                    cardsGrid.innerHTML = '<p class="text-muted">No hay cartas de este Pokémon en este idioma todavía.</p>';
+                    cardsGrid.innerHTML = `<p class="text-muted">${t("add.no_cards")}</p>`;
                     return;
                 }
                 cards.forEach((c) => cardsGrid.appendChild(buildCardTile(c, lang)));
@@ -137,16 +135,17 @@ function initCollectionAdd() {
 
     function loadCardsByCode({ code, number }) {
         const lang = langSelect.value;
+        const codeUpper = code.toUpperCase();
         cardsSection.classList.remove("d-none");
-        cardsTitle.textContent = `Buscando "${code.toUpperCase()} ${number}"...`;
+        cardsTitle.textContent = t("add.searching_code", { code: codeUpper, number });
         cardsGrid.innerHTML = "";
 
         fetch(`/collection/add/lookup-card?lang=${encodeURIComponent(lang)}&code=${encodeURIComponent(code)}&number=${encodeURIComponent(number)}`)
             .then((r) => r.json())
             .then((cards) => {
-                cardsTitle.textContent = `Resultado para "${code.toUpperCase()} ${number}" (${langSelect.selectedOptions[0].textContent})`;
+                cardsTitle.textContent = t("add.result_for_code", { code: codeUpper, number, lang: langSelect.selectedOptions[0].textContent });
                 if (!cards.length) {
-                    cardsGrid.innerHTML = '<p class="text-muted">No se encontró ninguna carta con ese código en este idioma.</p>';
+                    cardsGrid.innerHTML = `<p class="text-muted">${t("add.no_code_match")}</p>`;
                     return;
                 }
                 cards.forEach((c) => cardsGrid.appendChild(buildCardTile(c, lang)));
@@ -164,7 +163,7 @@ function initCollectionAdd() {
             <div class="card-tile-info">
                 <div class="card-tile-name">${card.name}</div>
                 <div class="card-tile-set text-muted small">${card.set_name}${card.number ? " · #" + card.number : ""}</div>
-                <button type="button" class="btn btn-sm btn-primary mt-1 w-100 btn-add-card"><i class="bi bi-plus-circle-fill"></i> Añadir</button>
+                <button type="button" class="btn btn-sm btn-primary mt-1 w-100 btn-add-card"><i class="bi bi-plus-circle-fill"></i> ${t("add.add_btn")}</button>
             </div>
         `;
         tile.querySelector(".btn-add-card").addEventListener("click", (e) => addCard(card, lang, e.target));
@@ -182,10 +181,10 @@ function initCollectionAdd() {
             .then(({ ok, body }) => {
                 button.disabled = false;
                 if (!ok) {
-                    banner.innerHTML = `<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo añadir "${card.name}": ${body.error || "error desconocido"}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
+                    banner.innerHTML = `<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> ${t("add.add_failed", { name: card.name, error: body.error || t("add.unknown_error") })}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${t("app.close")}"></button></div>`;
                     return;
                 }
-                banner.innerHTML = `<div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill"></i> "${card.name}" añadida — ahora tienes ${body.cantidad}.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
+                banner.innerHTML = `<div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill"></i> ${t("add.added", { name: card.name, n: body.cantidad })}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${t("app.close")}"></button></div>`;
                 const tile = button.closest(".card-tile");
                 if (tile) {
                     tile.classList.remove("just-added");
@@ -195,7 +194,7 @@ function initCollectionAdd() {
             })
             .catch(() => {
                 button.disabled = false;
-                banner.innerHTML = '<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo conectar con el servidor.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>';
+                banner.innerHTML = `<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> ${t("add.connection_failed")}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="${t("app.close")}"></button></div>`;
             });
     }
 }
@@ -234,16 +233,16 @@ function initCollectionView() {
             <img src="${tile.dataset.image}" class="card-modal-img" alt="${tile.dataset.name}">
             <p class="text-muted mb-1 mt-2">${tile.dataset.set}</p>
             ${tile.dataset.rarity ? `<p class="text-muted small">${tile.dataset.rarity}</p>` : ""}
-            <p class="d-flex align-items-center justify-content-center gap-2">Cantidad: <strong>${tile.dataset.cantidad}</strong> ${langFlagHtml(tile.dataset.idioma, "flag-icon")}</p>
+            <p class="d-flex align-items-center justify-content-center gap-2">${t("modal.quantity")} <strong>${tile.dataset.cantidad}</strong> ${langFlagHtml(tile.dataset.idioma, "flag-icon")}</p>
             <button type="button" class="btn btn-outline-danger btn-delete-card" data-id="${tile.dataset.id}">
-                <i class="bi bi-trash3-fill"></i> Eliminar de la colección
+                <i class="bi bi-trash3-fill"></i> ${t("modal.delete_from_collection")}
             </button>
         `;
         modal.show();
     }
 
     function deleteCard(id, tile) {
-        if (!confirm("¿Eliminar esta carta de tu colección?")) return;
+        if (!confirm(t("collection.confirm_delete"))) return;
         fetch(`/collection/cards/${id}`, { method: "DELETE" })
             .then((r) => r.json().then((body) => ({ ok: r.ok, body })))
             .then(({ ok }) => {
@@ -256,11 +255,11 @@ function initCollectionView() {
                     const remaining = grid.children.length;
                     if (countEl) {
                         countEl.textContent = remaining
-                            ? `${remaining} carta${remaining !== 1 ? "s" : ""} distinta${remaining !== 1 ? "s" : ""}.`
+                            ? (remaining === 1 ? t("collection.count_one") : t("collection.count_other", { n: remaining }))
                             : "";
                     }
                     if (remaining === 0) {
-                        grid.insertAdjacentHTML("afterend", '<p class="text-muted">Todavía no tienes ninguna carta registrada.</p>');
+                        grid.insertAdjacentHTML("afterend", `<p class="text-muted">${t("collection.empty")}</p>`);
                     }
                 }, 250);
             });
