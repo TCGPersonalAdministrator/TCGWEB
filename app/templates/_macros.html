@@ -13,6 +13,49 @@
 <a href="{{ url }}" class="btn btn-back mb-3"><i class="bi bi-arrow-left"></i> {{ label }}</a>
 {% endmacro %}
 
+{# Banderas dibujadas a mano en SVG (sin depender de la fuente de emoji del
+   sistema — en Windows los emoji de bandera no siempre se combinan y se ven
+   como dos letras sueltas, ej. "JP" en vez de 🇯🇵). #}
+{% set lang_flag_labels = {"en": "Inglés", "es": "Español", "ja": "Japonés", "ko": "Coreano", "zh_cn": "Chino simplificado"} %}
+
+{% macro lang_flag(idioma) %}
+<span class="card-tile-flag" title="{{ lang_flag_labels.get(idioma, idioma) }}">
+    {% if idioma == "en" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="60" height="40" fill="#00247d"/>
+        <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+        <path d="M0,0 L27,18 M0,40 L27,22 M60,0 L33,18 M60,40 L33,22" stroke="#cf142b" stroke-width="4"/>
+        <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+        <path d="M30,0 V40 M0,20 H60" stroke="#cf142b" stroke-width="7"/>
+    </svg>
+    {% elif idioma == "es" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="60" height="40" fill="#aa151b"/>
+        <rect y="10" width="60" height="20" fill="#f1bf00"/>
+    </svg>
+    {% elif idioma == "ja" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="60" height="40" fill="#fff"/>
+        <circle cx="30" cy="20" r="11" fill="#bc002d"/>
+    </svg>
+    {% elif idioma == "ko" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="60" height="40" fill="#fff"/>
+        <circle cx="30" cy="20" r="11" fill="#fff"/>
+        <path d="M30,9 A5.5,5.5 0 0,1 30,20 A5.5,5.5 0 0,0 30,31 A11,11 0 0,0 30,9 Z" fill="#cd2e3a"/>
+        <path d="M30,9 A11,11 0 0,0 30,31 A5.5,5.5 0 0,1 30,20 A5.5,5.5 0 0,0 30,9 Z" fill="#0047a0"/>
+    </svg>
+    {% elif idioma == "zh_cn" %}
+    <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="60" height="40" fill="#de2910"/>
+        <polygon points="10,4 11.35,8.14 15.71,8.15 12.19,10.71 13.53,14.85 10,12.3 6.47,14.85 7.81,10.71 4.29,8.15 8.65,8.14" fill="#ffde00"/>
+    </svg>
+    {% else %}
+    <i class="bi bi-flag-fill"></i>
+    {% endif %}
+</span>
+{% endmacro %}
+
 {% macro sync_status_badge(synced_at) %}
 {% if synced_at %}
 <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Actualizado ({{ synced_at }})</span>

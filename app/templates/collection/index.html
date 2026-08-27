@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import lang_flag %}
 
 {% block title %}Mi colección · TCG Personal Administrator{% endblock %}
 
@@ -26,16 +27,19 @@
 <div class="card-grid collection-grid" id="collection-grid">
     {% for c in cards %}
     <div class="card-tile" data-id="{{ c.id }}" data-name="{{ c.name }}" data-set="{{ c.set_name }}"
-         data-rarity="{{ c.rarity or '' }}" data-cantidad="{{ c.cantidad }}"
+         data-rarity="{{ c.rarity or '' }}" data-cantidad="{{ c.cantidad }}" data-idioma="{{ c.idioma }}"
          data-image="{{ tcgapi_base_url }}{{ c.image_url }}">
         {% if c.image_url %}
         <img src="{{ tcgapi_base_url }}{{ c.image_url }}" alt="{{ c.name }}" loading="lazy">
         {% else %}
         <div class="pokedex-tile-placeholder">?</div>
         {% endif %}
-        {% if c.cantidad > 1 %}
-        <span class="card-tile-qty">x{{ c.cantidad }}</span>
-        {% endif %}
+        <div class="card-tile-badges">
+            {{ lang_flag(c.idioma) }}
+            {% if c.cantidad > 1 %}
+            <span class="card-tile-qty">x{{ c.cantidad }}</span>
+            {% endif %}
+        </div>
         <div class="card-tile-info">
             <div class="card-tile-name">{{ c.name }}</div>
             <div class="card-tile-set text-muted small">{{ c.set_name }}</div>

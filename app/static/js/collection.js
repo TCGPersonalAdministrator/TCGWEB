@@ -1,3 +1,19 @@
+const LANG_FLAG_SVGS = {
+    en: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#00247d"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/><path d="M0,0 L27,18 M0,40 L27,22 M60,0 L33,18 M60,40 L33,22" stroke="#cf142b" stroke-width="4"/><path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/><path d="M30,0 V40 M0,20 H60" stroke="#cf142b" stroke-width="7"/></svg>`,
+    es: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#aa151b"/><rect y="10" width="60" height="20" fill="#f1bf00"/></svg>`,
+    ja: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#fff"/><circle cx="30" cy="20" r="11" fill="#bc002d"/></svg>`,
+    ko: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#fff"/><path d="M30,9 A5.5,5.5 0 0,1 30,20 A5.5,5.5 0 0,0 30,31 A11,11 0 0,0 30,9 Z" fill="#cd2e3a"/><path d="M30,9 A11,11 0 0,0 30,31 A5.5,5.5 0 0,1 30,20 A5.5,5.5 0 0,0 30,9 Z" fill="#0047a0"/></svg>`,
+    zh_cn: `<svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="60" height="40" fill="#de2910"/><polygon points="10,4 11.35,8.14 15.71,8.15 12.19,10.71 13.53,14.85 10,12.3 6.47,14.85 7.81,10.71 4.29,8.15 8.65,8.14" fill="#ffde00"/></svg>`,
+};
+
+const LANG_LABELS = { en: "Inglés", es: "Español", ja: "Japonés", ko: "Coreano", zh_cn: "Chino simplificado" };
+
+function langFlagHtml(idioma, className = "card-tile-flag") {
+    const svg = LANG_FLAG_SVGS[idioma];
+    if (!svg) return "";
+    return `<span class="${className}" title="${LANG_LABELS[idioma] || idioma}">${svg}</span>`;
+}
+
 function debounce(fn, delayMs) {
     let timer;
     return (...args) => {
@@ -155,7 +171,7 @@ function initCollectionView() {
             <img src="${tile.dataset.image}" class="card-modal-img" alt="${tile.dataset.name}">
             <p class="text-muted mb-1 mt-2">${tile.dataset.set}</p>
             ${tile.dataset.rarity ? `<p class="text-muted small">${tile.dataset.rarity}</p>` : ""}
-            <p>Cantidad: <strong>${tile.dataset.cantidad}</strong></p>
+            <p class="d-flex align-items-center justify-content-center gap-2">Cantidad: <strong>${tile.dataset.cantidad}</strong> ${langFlagHtml(tile.dataset.idioma, "flag-icon")}</p>
             <button type="button" class="btn btn-outline-danger btn-delete-card" data-id="${tile.dataset.id}">
                 <i class="bi bi-trash3-fill"></i> Eliminar de la colección
             </button>
