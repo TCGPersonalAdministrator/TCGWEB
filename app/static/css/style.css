@@ -378,7 +378,7 @@ a {
 }
 
 /* ---------- Modal de detalle (carta o Pokémon) ---------- */
-/* El fondo semitransparente ya lo da Bootstrap (.modal-backdrop); solo se
+/* El fondo semitransparente ya lo da Bootstrap (.modal-backdrop); se
    oscurece un poco más para que la carta/Pokémon en grande resalte mejor. */
 
 .modal-backdrop {
@@ -389,11 +389,40 @@ a {
     font-family: "Baloo 2", sans-serif;
 }
 
+/* El propio recuadro del modal sigue el mismo patrón oscuro/transparente
+   que el backdrop de alrededor, en vez del blanco por defecto de Bootstrap. */
+
+.modal-dark .modal-content {
+    background-color: rgba(38, 35, 34, 0.55);
+    backdrop-filter: blur(6px);
+    color: #fff;
+}
+
+.modal-dark .modal-title {
+    color: #fff;
+}
+
+.modal-dark .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.modal-dark .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.modal-dark .stat-bar {
+    background: rgba(255, 255, 255, 0.15);
+}
+
 .pokemon-modal-img, .card-modal-img {
     max-width: 100%;
     max-height: 320px;
     border-radius: var(--bs-border-radius);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.card-modal-img {
+    max-height: 520px;
 }
 
 .pokemon-modal-img.missing {
