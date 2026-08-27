@@ -19,7 +19,21 @@ function showSyncBanner(message, type) {
     const banner = document.getElementById("sync-result-banner");
     if (!banner) return;
     const icon = type === "success" ? "bi-check-circle-fill" : type === "warning" ? "bi-exclamation-circle-fill" : "bi-exclamation-triangle-fill";
-    banner.innerHTML = `<div class="alert alert-${type}" role="alert"><i class="bi ${icon}"></i> ${message}</div>`;
+    banner.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert"><i class="bi ${icon}"></i> ${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
+}
+
+// Convierte una duración en milisegundos a un texto legible, mostrando solo
+// las unidades que hacen falta (ej. "3 s", "2 min 5 s", "1 h 4 min").
+function formatDuration(ms) {
+    const totalSeconds = Math.round(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) return `${hours} h ${minutes} min`;
+    if (minutes > 0) return `${minutes} min ${seconds} s`;
+    if (totalSeconds > 0) return `${totalSeconds} s`;
+    return `${ms} ms`;
 }
 
 function buildSyncResultMessage(result) {
@@ -29,7 +43,7 @@ function buildSyncResultMessage(result) {
         if (result.failed) parts.push(`${result.failed} fallidos`);
     }
     let msg = "Sincronización completada: " + parts.join(", ");
-    if (result.duration_ms !== undefined) msg += ` en ${result.duration_ms} ms.`;
+    if (result.duration_ms !== undefined) msg += ` en ${formatDuration(result.duration_ms)}.`;
     if (result.failed_pages && result.failed_pages.length) {
         msg += ` Páginas que fallaron y se saltaron: ${JSON.stringify(result.failed_pages)} (vuelve a sincronizar para reintentarlas).`;
     }

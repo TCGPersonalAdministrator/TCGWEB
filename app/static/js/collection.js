@@ -119,10 +119,10 @@ function initCollectionAdd() {
             .then(({ ok, body }) => {
                 button.disabled = false;
                 if (!ok) {
-                    banner.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo añadir "${card.name}": ${body.error || "error desconocido"}</div>`;
+                    banner.innerHTML = `<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo añadir "${card.name}": ${body.error || "error desconocido"}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
                     return;
                 }
-                banner.innerHTML = `<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> "${card.name}" añadida — ahora tienes ${body.cantidad}.</div>`;
+                banner.innerHTML = `<div class="alert alert-success alert-dismissible fade show"><i class="bi bi-check-circle-fill"></i> "${card.name}" añadida — ahora tienes ${body.cantidad}.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>`;
                 const tile = button.closest(".card-tile");
                 if (tile) {
                     tile.classList.remove("just-added");
@@ -132,7 +132,7 @@ function initCollectionAdd() {
             })
             .catch(() => {
                 button.disabled = false;
-                banner.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo conectar con el servidor.</div>';
+                banner.innerHTML = '<div class="alert alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-triangle-fill"></i> No se pudo conectar con el servidor.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button></div>';
             });
     }
 }
