@@ -14,8 +14,29 @@ function buildCustomSelect(select) {
     caret.setAttribute("aria-hidden", "true");
 
     const menu = document.createElement("div");
-    menu.className = "custom-select-menu list-group";
+    menu.className = "custom-select-menu";
     menu.setAttribute("role", "listbox");
+
+    const searchWrap = document.createElement("div");
+    searchWrap.className = "custom-select-search-wrap";
+    const search = document.createElement("input");
+    search.type = "text";
+    search.className = "custom-select-search";
+    search.placeholder = "Buscar...";
+    search.autocomplete = "off";
+    search.spellcheck = false;
+    searchWrap.appendChild(search);
+
+    const list = document.createElement("div");
+    list.className = "custom-select-list list-group";
+
+    const empty = document.createElement("div");
+    empty.className = "custom-select-empty text-muted small d-none";
+    empty.textContent = "Sin resultados.";
+
+    menu.appendChild(searchWrap);
+    menu.appendChild(list);
+    menu.appendChild(empty);
 
     select.classList.add("custom-select-native");
     select.tabIndex = -1;
@@ -29,18 +50,20 @@ function buildCustomSelect(select) {
 
     let highlightedIndex = select.selectedIndex;
 
-    Array.from(select.options).forEach((opt, i) => {
+    const items = Array.from(select.options).map((opt, i) => {
         const item = document.createElement("button");
         item.type = "button";
         item.setAttribute("role", "option");
         item.className = "list-group-item list-group-item-action custom-select-option";
         item.textContent = opt.textContent;
+        item.dataset.searchText = opt.textContent.toLowerCase();
         item.addEventListener("click", (e) => {
             e.stopPropagation();
             selectIndex(i);
             close();
         });
-        menu.appendChild(item);
+        list.appendChild(item);
+        return item;
     });
 
     function syncLabel() {
@@ -49,7 +72,7 @@ function buildCustomSelect(select) {
     }
 
     function updateActive() {
-        Array.from(menu.children).forEach((item, i) => {
+        items.forEach((item, i) => {
             item.classList.toggle("active", i === select.selectedIndex);
         });
     }
@@ -63,12 +86,27 @@ function buildCustomSelect(select) {
         updateActive();
     }
 
+    function visibleItems() {
+        return items.filter((item) => !item.classList.contains("d-none"));
+    }
+
     function highlight(i) {
         highlightedIndex = i;
-        Array.from(menu.children).forEach((item, idx) => {
+        items.forEach((item, idx) => {
             item.classList.toggle("highlighted", idx === i);
             if (idx === i) item.scrollIntoView({ block: "nearest" });
         });
+    }
+
+    function applyFilter() {
+        const q = search.value.trim().toLowerCase();
+        items.forEach((item) => {
+            item.classList.toggle("d-none", !(!q || item.dataset.searchText.includes(q)));
+        });
+        const visible = visibleItems();
+        empty.classList.toggle("d-none", visible.length > 0);
+        const stillVisible = highlightedIndex >= 0 && !items[highlightedIndex].classList.contains("d-none");
+        highlight(stillVisible ? highlightedIndex : items.indexOf(visible[0]));
     }
 
     function isOpen() {
@@ -79,8 +117,11 @@ function buildCustomSelect(select) {
         menu.classList.add("show");
         wrapper.classList.add("open");
         wrapper.setAttribute("aria-expanded", "true");
+        search.value = "";
+        applyFilter();
         highlight(select.selectedIndex);
         document.addEventListener("click", onDocClick);
+        setTimeout(() => search.focus(), 0);
     }
 
     function close() {
@@ -94,37 +135,53 @@ function buildCustomSelect(select) {
         if (!wrapper.contains(e.target)) close();
     }
 
-    wrapper.addEventListener("click", () => {
+    wrapper.addEventListener("click", (e) => {
+        if (e.target === search) return;
         if (isOpen()) close();
         else open();
     });
 
     wrapper.addEventListener("keydown", (e) => {
+        if (document.activeElement === search) return;
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (isOpen()) {
-                selectIndex(highlightedIndex);
-                close();
-            } else {
-                open();
-            }
+            if (!isOpen()) open();
         } else if (e.key === "Escape") {
             close();
-        } else if (e.key === "ArrowDown") {
+        } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
             if (!isOpen()) open();
-            else highlight(Math.min(highlightedIndex + 1, select.options.length - 1));
-        } else if (e.key === "ArrowUp") {
+        }
+    });
+
+    search.addEventListener("input", applyFilter);
+
+    search.addEventListener("keydown", (e) => {
+        e.stopPropagation();
+        if (e.key === "Escape") {
+            close();
+            wrapper.focus();
+        } else if (e.key === "Enter") {
             e.preventDefault();
-            if (!isOpen()) open();
-            else highlight(Math.max(highlightedIndex - 1, 0));
+            if (highlightedIndex >= 0) selectIndex(highlightedIndex);
+            close();
+            wrapper.focus();
+        } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+            e.preventDefault();
+            const visible = visibleItems();
+            if (!visible.length) return;
+            const pos = visible.indexOf(items[highlightedIndex]);
+            const nextPos = e.key === "ArrowDown"
+                ? Math.min(pos + 1, visible.length - 1)
+                : Math.max(pos - 1, 0);
+            highlight(items.indexOf(visible[Math.max(nextPos, 0)]));
         }
     });
 
     syncLabel();
     updateActive();
 
-    menu.style.display = "block";
+    menu.style.display = "flex";
     const naturalWidth = menu.scrollWidth;
     menu.style.display = "";
     if (naturalWidth <= 300) {

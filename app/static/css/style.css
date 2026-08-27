@@ -224,6 +224,7 @@ a {
     cursor: pointer;
     user-select: none;
     outline: none;
+    background-image: none;
 }
 
 .custom-select-label {
@@ -261,19 +262,54 @@ a {
     width: max-content;
     max-width: min(90vw, 480px);
     z-index: 1000;
-    max-height: 320px;
-    overflow-y: auto;
     display: none;
-    padding: 0.4rem;
-    margin: 0;
+    flex-direction: column;
     background-color: #fff;
     border: 2px solid rgba(59, 76, 202, 0.18);
     border-radius: var(--bs-border-radius-lg);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
 }
 
 .custom-select-menu.show {
-    display: block;
+    display: flex;
+}
+
+.custom-select-search-wrap {
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(59, 76, 202, 0.15);
+}
+
+.custom-select-search {
+    width: 100%;
+    border: 2px solid rgba(59, 76, 202, 0.18);
+    border-radius: var(--bs-border-radius-pill);
+    padding: 0.3rem 0.9rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--pkmn-ink);
+    background-color: var(--pkmn-cream);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.custom-select-search:focus {
+    outline: none;
+    border-color: var(--pkmn-yellow-dark);
+    box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.3);
+}
+
+.custom-select-list {
+    overflow-y: auto;
+    max-height: 280px;
+    padding: 0.4rem;
+    margin: 0;
+}
+
+.custom-select-empty {
+    padding: 0.6rem 0.9rem;
+    text-align: center;
 }
 
 .custom-select-option {
