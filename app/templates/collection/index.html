@@ -9,19 +9,39 @@
     <a href="{{ url_for('collection.add') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> {{ t('collection.add_button') }}</a>
 </div>
 
-<form method="get" class="mb-4" style="max-width: 260px;">
-    <label for="lang-filter" class="form-label">{{ t('collection.filter_lang') }}</label>
-    <select id="lang-filter" name="lang" class="form-select" onchange="this.form.submit()">
-        <option value="">{{ t('collection.filter_all') }}</option>
-        {% for l in languages %}
-        <option value="{{ l.code }}" {{ "selected" if l.code == selected_lang else "" }}>{{ catalog_lang_name(l.code) }}</option>
-        {% endfor %}
-    </select>
+<form method="get" class="mb-4 d-flex flex-wrap gap-3">
+    <div style="max-width: 260px; width: 100%;">
+        <label for="lang-filter" class="form-label">{{ t('collection.filter_lang') }}</label>
+        <select id="lang-filter" name="lang" class="form-select" onchange="this.form.submit()">
+            <option value="">{{ t('collection.filter_all') }}</option>
+            {% for l in languages %}
+            <option value="{{ l.code }}" {{ "selected" if l.code == selected_lang else "" }}>{{ catalog_lang_name(l.code) }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div style="max-width: 260px; width: 100%;">
+        <label for="set-filter" class="form-label">{{ t('collection.filter_set') }}</label>
+        <select id="set-filter" name="set" class="form-select" onchange="this.form.submit()">
+            <option value="">{{ t('collection.filter_all') }}</option>
+            {% for s in sets %}
+            <option value="{{ s.set_id }}" {{ "selected" if s.set_id == selected_set else "" }}>{{ s.set_name }} ({{ catalog_lang_name(s.idioma) }})</option>
+            {% endfor %}
+        </select>
+    </div>
 </form>
 
 {% if not cards %}
 <p class="text-muted" id="empty-collection-msg">{{ t('collection.empty') }}</p>
 {% else %}
+{% set pct = (owned_count / total_count * 100) | round(1) if total_count else 0 %}
+<p class="lead">
+    {{ t('collection.progress_intro') }}
+    <strong>{{ owned_count }} / {{ total_count }}</strong> {{ t('collection.progress_suffix') }}
+</p>
+<div class="progress mb-4" role="progressbar" aria-valuenow="{{ owned_count }}" aria-valuemin="0" aria-valuemax="{{ total_count }}">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ pct }}%"></div>
+    <span class="progress-label">{{ pct }}%</span>
+</div>
 <p class="text-muted" id="collection-count">{{ t('collection.count_one') if cards | length == 1 else t('collection.count_other', n=cards | length) }}</p>
 {% endif %}
 <div class="card-grid collection-grid" id="collection-grid">

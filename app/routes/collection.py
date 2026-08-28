@@ -5,6 +5,7 @@ from app.api_calls.collection_api import (
     delete_owned_card,
     list_all_languages,
     list_owned_cards,
+    list_owned_sets,
     list_pokemon_cards,
     lookup_cards_by_code,
 )
@@ -18,11 +19,26 @@ collection_bp = Blueprint("collection", __name__, url_prefix="/collection")
 @collection_bp.route("/", methods=["GET"])
 def index():
     lang = request.args.get("lang", "")
+    set_id = request.args.get("set", "")
+    cards = list_owned_cards(lang or None, set_id or None)
+
+    # Progreso = cartas conseguidas frente al total de cartas de los sets en
+    # los que ya tienes alguna carta (no el catálogo entero) — cada set solo
+    # cuenta una vez aunque tengas varias cartas suyas. Se agrupa por
+    # (idioma, set_id), no solo por set_id, porque los ids de set no están
+    # garantizados como únicos entre los 5 catálogos distintos (inglés vía
+    # pokemontcg.io, resto vía tcgdex.dev).
+    set_totals = {(c["idioma"], c["set_id"]): c["set_total"] for c in cards}
+
     return render_template(
         "collection/index.html",
-        cards=list_owned_cards(lang or None),
+        cards=cards,
         languages=list_all_languages(),
+        sets=list_owned_sets(),
         selected_lang=lang,
+        selected_set=set_id,
+        owned_count=len(cards),
+        total_count=sum(set_totals.values()),
     )
 
 

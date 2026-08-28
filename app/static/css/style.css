@@ -506,6 +506,7 @@ a {
 /* ---------- Barra de progreso ---------- */
 
 .progress {
+    position: relative;
     border-radius: var(--bs-border-radius-pill);
     background-color: rgba(0, 0, 0, 0.08);
     height: 1.1rem;
@@ -513,6 +514,25 @@ a {
 
 .progress-bar {
     background-image: linear-gradient(90deg, var(--pkmn-yellow) 0%, var(--pkmn-red) 100%);
+}
+
+/* Porcentaje centrado en la barra entera (no en el tramo relleno) — con
+   porcentajes bajos el tramo relleno es demasiado estrecho para que el texto
+   quepa dentro, así que se superpone como una etiqueta aparte sobre todo el
+   ancho. Texto blanco con sombra oscura para leerse igual sobre el
+   degradado amarillo/rojo del relleno que sobre el fondo translúcido vacío,
+   en los dos temas. */
+.progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65), 0 0 3px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
 }
 
 /* ---------- Spinner de sincronización — pokéball girando ---------- */

@@ -13,12 +13,14 @@
 {% else %}
 {% set owned_count = pokemon | selectattr("owned") | list | length %}
 {% set total = pokemon | length %}
+{% set pct = (owned_count / total * 100) | round(1) %}
 <p class="lead">
     {{ t('pokedex.challenge') }}
     <strong>{{ owned_count }} / {{ total }}</strong> {{ t('pokedex.achieved') }}
 </p>
 <div class="progress mb-4" role="progressbar" aria-valuenow="{{ owned_count }}" aria-valuemin="0" aria-valuemax="{{ total }}">
-    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ (owned_count / total * 100) | round(1) }}%"></div>
+    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ pct }}%"></div>
+    <span class="progress-label">{{ pct }}%</span>
 </div>
 
 <div class="pokedex-grid">

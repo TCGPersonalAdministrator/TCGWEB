@@ -42,10 +42,25 @@ def add_owned_card(card_id: str, lang: str) -> tuple[dict, int]:
     return response.json(), response.status_code
 
 
-def list_owned_cards(lang: str | None = None) -> list[dict]:
-    params = {"lang": lang} if lang else {}
+def list_owned_cards(lang: str | None = None, set_id: str | None = None) -> list[dict]:
+    params = {}
+    if lang:
+        params["lang"] = lang
+    if set_id:
+        params["set"] = set_id
     response = requests.get(
         f"{current_app.config['TCGAPI_BASE_URL']}/owned/cards", params=params, timeout=10
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def list_owned_sets() -> list[dict]:
+    """Sets de los que el usuario posee al menos una carta, para el filtro
+    por set de "Mi colección" — no acotado por idioma, es una faceta
+    independiente del filtro de idioma."""
+    response = requests.get(
+        f"{current_app.config['TCGAPI_BASE_URL']}/owned/sets", timeout=10
     )
     response.raise_for_status()
     return response.json()

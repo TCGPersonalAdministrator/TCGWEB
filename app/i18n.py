@@ -119,7 +119,14 @@ TRANSLATIONS = {
     "collection.title": {"es": "Mi colección", "en": "My collection", "pt": "A minha coleção"},
     "collection.add_button": {"es": "Añadir carta", "en": "Add card", "pt": "Adicionar carta"},
     "collection.filter_lang": {"es": "Filtrar por idioma", "en": "Filter by language", "pt": "Filtrar por idioma"},
+    "collection.filter_set": {"es": "Filtrar por set", "en": "Filter by set", "pt": "Filtrar por set"},
     "collection.filter_all": {"es": "Todos", "en": "All", "pt": "Todos"},
+    "collection.progress_intro": {
+        "es": "Cartas conseguidas de los sets en los que ya tienes alguna carta —",
+        "en": "Cards obtained from the sets you already have a card in —",
+        "pt": "Cartas obtidas dos sets em que já tens alguma carta —",
+    },
+    "collection.progress_suffix": {"es": "conseguidas.", "en": "obtained.", "pt": "obtidas."},
     "collection.count_one": {"es": "1 carta distinta.", "en": "1 distinct card.", "pt": "1 carta distinta."},
     "collection.count_other": {
         "es": "{n} cartas distintas.",
