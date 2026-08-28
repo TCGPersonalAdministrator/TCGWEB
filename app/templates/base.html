@@ -32,16 +32,42 @@
                 <span class="pokeball-icon" aria-hidden="true"></span>
                 TCG Personal Administrator
             </a>
-            <div class="navbar-nav flex-row align-items-center gap-1">
-                <a class="nav-link" href="{{ url_for('pokedex.index') }}"><i class="bi bi-grid-3x3-gap-fill"></i> {{ t('nav.pokedex') }}</a>
-                <a class="nav-link" href="{{ url_for('collection.index') }}"><i class="bi bi-collection-fill"></i> {{ t('nav.collection') }}</a>
-                <a class="nav-link" href="{{ url_for('admin.index') }}"><i class="bi bi-gear-fill"></i> {{ t('nav.admin') }}</a>
-                <a class="btn nav-lang-btn" href="{{ url_for('main.set_language', lang=next_ui_lang(current_lang)) }}" title="{{ t('lang.switch_title') }} ({{ ui_lang_name(current_lang) }})">
-                    {{ ui_lang_flag(current_lang) }}
-                </a>
-                <button type="button" class="btn nav-theme-btn" id="theme-toggle-btn">
-                    <i class="bi bi-moon-stars-fill" id="theme-toggle-icon" aria-hidden="true"></i>
-                </button>
+
+            <button class="btn nav-theme-btn navbar-toggler" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mainNavOffcanvas"
+                    aria-controls="mainNavOffcanvas" aria-label="{{ t('nav.toggle_menu') }}">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+
+            <div class="offcanvas offcanvas-lg offcanvas-start navbar-offcanvas" tabindex="-1"
+                 id="mainNavOffcanvas" aria-labelledby="mainNavOffcanvasLabel">
+                <div class="offcanvas-header">
+                    <a class="navbar-brand offcanvas-title d-flex align-items-center gap-2"
+                       id="mainNavOffcanvasLabel" href="{{ url_for('main.index') }}">
+                        <span class="pokeball-icon" aria-hidden="true"></span>
+                        TCG Personal Administrator
+                    </a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                            aria-label="{{ t('app.close') }}"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="navbar-nav flex-column flex-lg-row flex-lg-grow-1 justify-content-lg-end align-items-lg-center gap-1">
+                        <a class="nav-link" href="{{ url_for('pokedex.index') }}"><i class="bi bi-grid-3x3-gap-fill"></i> {{ t('nav.pokedex') }}</a>
+                        <a class="nav-link" href="{{ url_for('collection.index') }}"><i class="bi bi-collection-fill"></i> {{ t('nav.collection') }}</a>
+                        <a class="nav-link" href="{{ url_for('admin.index') }}"><i class="bi bi-gear-fill"></i> {{ t('nav.admin') }}</a>
+
+                        <hr class="d-lg-none">
+
+                        <a class="btn nav-lang-btn" href="{{ url_for('main.set_language', lang=next_ui_lang(current_lang)) }}" title="{{ t('lang.switch_title') }} ({{ ui_lang_name(current_lang) }})">
+                            {{ ui_lang_flag(current_lang) }}
+                            <span class="d-lg-none">{{ t('lang.switch_title') }}</span>
+                        </a>
+                        <button type="button" class="btn nav-theme-btn" id="theme-toggle-btn">
+                            <i class="bi bi-moon-stars-fill" id="theme-toggle-icon" aria-hidden="true"></i>
+                            <span class="d-lg-none" id="theme-toggle-label"></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -85,11 +111,14 @@
         (function () {
             var btn = document.getElementById("theme-toggle-btn");
             var icon = document.getElementById("theme-toggle-icon");
+            var label = document.getElementById("theme-toggle-label");
 
             function syncButton() {
                 var isDark = document.documentElement.getAttribute("data-theme") === "dark";
                 icon.className = isDark ? "bi bi-sun-fill" : "bi bi-moon-stars-fill";
-                btn.title = window.t(isDark ? "theme.to_light" : "theme.to_dark");
+                var text = window.t(isDark ? "theme.to_light" : "theme.to_dark");
+                btn.title = text;
+                if (label) label.textContent = text;
             }
 
             syncButton();
@@ -105,6 +134,22 @@
                     localStorage.setItem("theme", isDark ? "light" : "dark");
                 } catch (e) {}
                 syncButton();
+            });
+        })();
+    </script>
+    <script>
+        // El menú lateral se neutraliza por CSS a partir de lg (sin fondo/
+        // backdrop), pero si estaba abierto en móvil/tablet y el usuario
+        // gira la pantalla o agranda la ventana cruzando ese punto, el
+        // backdrop y el bloqueo de scroll del body quedarían huérfanos.
+        (function () {
+            var offcanvasEl = document.getElementById("mainNavOffcanvas");
+            var mql = window.matchMedia("(min-width: 992px)");
+            mql.addEventListener("change", function (e) {
+                if (e.matches) {
+                    var instance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (instance) instance.hide();
+                }
             });
         })();
     </script>

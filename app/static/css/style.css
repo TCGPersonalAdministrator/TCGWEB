@@ -198,6 +198,63 @@ a {
     flex-shrink: 0;
 }
 
+/* ---------- Menú lateral (offcanvas) en móvil/tablet ---------- */
+
+.navbar-toggler:focus,
+.navbar-toggler:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+
+.navbar-offcanvas {
+    --bs-offcanvas-width: min(300px, 84vw);
+    --bs-offcanvas-border-width: 0;
+}
+
+.navbar-offcanvas hr {
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    opacity: 1;
+    margin: 0.6rem 0;
+}
+
+/* El fondo/sombra propios del panel solo tienen sentido por debajo de lg,
+   cuando es de verdad un cajón lateral flotante — en lg y superior Bootstrap
+   lo vuelve contenido normal dentro del propio .navbar, que ya tiene su
+   degradado; repetir el fondo aquí sin esta condición dejaba una costura
+   visible (dos degradados independientes + sombra) sobre la barra de
+   escritorio. */
+@media (max-width: 991.98px) {
+    .navbar-offcanvas {
+        background: linear-gradient(135deg, var(--pkmn-blue-dark) 0%, var(--pkmn-blue) 100%);
+        color: #fff;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .navbar-offcanvas .offcanvas-header {
+        border-bottom: 2px solid var(--pkmn-yellow);
+    }
+
+    .navbar-offcanvas .navbar-nav .nav-link {
+        width: 100%;
+        text-align: left;
+        border-radius: var(--bs-border-radius);
+        padding: 0.75rem 1rem !important;
+        font-size: 1.05rem;
+    }
+
+    .navbar-offcanvas .nav-lang-btn,
+    .navbar-offcanvas .nav-theme-btn {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0.6rem;
+        border-radius: var(--bs-border-radius);
+        padding: 0.7rem 1rem;
+        height: auto;
+        margin-left: 0;
+        line-height: normal;
+        font-size: 1.05rem;
+    }
+}
+
 /* ---------- Botones ---------- */
 
 .btn {
@@ -883,3 +940,28 @@ a {
 .type-dark { background-color: #705848; }
 .type-steel { background-color: #b8b8d0; color: #262322; }
 .type-fairy { background-color: #ee99ac; color: #262322; }
+
+/* ---------- Responsive (móvil/tablet) ---------- */
+
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .navbar-brand {
+        font-size: 1.05rem;
+    }
+
+    .pokedex-grid {
+        grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+}

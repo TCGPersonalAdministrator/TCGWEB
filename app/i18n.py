@@ -33,6 +33,7 @@ TRANSLATIONS = {
     "nav.pokedex": {"es": "Pokédex", "en": "Pokédex", "pt": "Pokédex"},
     "nav.collection": {"es": "Mi colección", "en": "My collection", "pt": "A minha coleção"},
     "nav.admin": {"es": "Administración", "en": "Administration", "pt": "Administração"},
+    "nav.toggle_menu": {"es": "Abrir menú", "en": "Open menu", "pt": "Abrir menu"},
     "app.close": {"es": "Cerrar", "en": "Close", "pt": "Fechar"},
     "lang.switch_title": {
         "es": "Cambiar idioma de la aplicación",
