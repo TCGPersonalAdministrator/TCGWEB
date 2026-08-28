@@ -14,6 +14,7 @@
     --pkmn-yellow-dark: #e0a900;
     --pkmn-cream: #fff8ec;
     --pkmn-ink: #262322;
+    --pkmn-surface: #fff;
 
     --bs-body-font-family: "Nunito", system-ui, sans-serif;
     --bs-body-bg: var(--pkmn-cream);
@@ -31,6 +32,44 @@
     --bs-border-radius-pill: 50rem;
 }
 
+/* ---------- Modo oscuro ---------- */
+/* Activado poniendo data-theme="dark" en <html> (botón toggle en el navbar,
+   ver base.html — usa localStorage, con prefers-color-scheme como valor
+   inicial si el usuario no ha elegido todavía). En vez de duplicar reglas,
+   redefine las mismas variables de tema: el fondo de página, el texto, los
+   inputs, las tarjetas/tiles y el list-group ya se apoyan en
+   --pkmn-cream/--pkmn-ink/--pkmn-surface o en las --bs-* que dependen de
+   ellas, así que la mayoría de la interfaz cambia sola. Los pocos sitios
+   con colores fijos en rgba(0,0,0,...) (bordes, pistas de barra) se ajustan
+   aparte más abajo porque quedan casi invisibles sobre fondo oscuro. */
+:root[data-theme="dark"] {
+    --pkmn-cream: #1c1a22;
+    --pkmn-ink: #f1ece2;
+    --pkmn-surface: #2b2733;
+    --bs-secondary-color: rgba(241, 236, 226, 0.65);
+    --bs-border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* .list-group ya redeclara --bs-list-group-* a partir de --bs-body-bg/color
+   directamente sobre el propio elemento, así que una redefinición en :root
+   no le llega por herencia — hace falta pisarla en el propio selector. */
+:root[data-theme="dark"] .list-group-item-action {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:root[data-theme="dark"] .list-group-item-action:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .set-tile-visual {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .progress,
+:root[data-theme="dark"] .stat-bar {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
 body {
     background:
         radial-gradient(circle at 8% 0%, rgba(59, 76, 202, 0.10) 0%, transparent 32%),
@@ -38,6 +77,7 @@ body {
         radial-gradient(circle at 50% 100%, rgba(238, 21, 21, 0.06) 0%, transparent 40%),
         var(--pkmn-cream);
     background-attachment: fixed;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1, h2, h3, h4, h5, h6, .navbar-brand {
@@ -117,6 +157,30 @@ a {
     transform: translateY(-1px);
 }
 
+/* ---------- Toggle claro/oscuro (navbar) ---------- */
+
+.nav-theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    margin-left: 0.15rem;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1.05rem;
+    border-radius: 50%;
+    line-height: 0;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.nav-theme-btn:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+}
+
 /* Pokéball dibujada solo con CSS — icono de marca, sin necesitar assets binarios */
 
 .pokeball-icon {
@@ -124,10 +188,13 @@ a {
     width: 1.4rem;
     height: 1.4rem;
     border-radius: 50%;
-    border: 2px solid var(--pkmn-ink);
+    /* Ink fijo (no var(--pkmn-ink)) a propósito: es el icono de marca sobre
+       el navbar azul, no una superficie de página — debe verse igual en
+       claro y oscuro, sin heredar el aclarado de --pkmn-ink en modo oscuro. */
+    border: 2px solid #262322;
     background:
-        radial-gradient(circle at 50% 50%, #fff 0 20%, var(--pkmn-ink) 20% 26%, transparent 26%),
-        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, var(--pkmn-ink) 46%, var(--pkmn-ink) 54%, #fff 54%, #fff 100%);
+        radial-gradient(circle at 50% 50%, #fff 0 20%, #262322 20% 26%, transparent 26%),
+        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, #262322 46%, #262322 54%, #fff 54%, #fff 100%);
     flex-shrink: 0;
 }
 
@@ -192,7 +259,7 @@ a {
     padding: 0.5rem 1.15rem;
     font-weight: 600;
     color: var(--pkmn-ink);
-    background-color: #fff;
+    background-color: var(--pkmn-surface);
     transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
@@ -213,7 +280,7 @@ a {
 
 .input-group-text {
     border: 2px solid rgba(59, 76, 202, 0.18);
-    background-color: #fff;
+    background-color: var(--pkmn-surface);
     color: var(--pkmn-blue);
     font-weight: 700;
 }
@@ -284,7 +351,7 @@ a {
     z-index: 1000;
     display: none;
     flex-direction: column;
-    background-color: #fff;
+    background-color: var(--pkmn-surface);
     border: 2px solid rgba(59, 76, 202, 0.18);
     border-radius: var(--bs-border-radius-lg);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
@@ -396,10 +463,12 @@ a {
 .spinner-border {
     width: 3.25rem;
     height: 3.25rem;
-    border: 3px solid var(--pkmn-ink);
+    /* Ink fijo, mismo motivo que .pokeball-icon: siempre está sobre el
+       overlay oscuro de sincronización, no sobre el fondo de página. */
+    border: 3px solid #262322;
     background:
-        radial-gradient(circle at 50% 50%, #fff 0 18%, var(--pkmn-ink) 18% 24%, transparent 24%),
-        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, var(--pkmn-ink) 46%, var(--pkmn-ink) 54%, #fff 54%, #fff 100%);
+        radial-gradient(circle at 50% 50%, #fff 0 18%, #262322 18% 24%, transparent 24%),
+        linear-gradient(to bottom, var(--pkmn-red) 0%, var(--pkmn-red) 46%, #262322 46%, #262322 54%, #fff 54%, #fff 100%);
     animation: pokeball-spin 0.9s linear infinite;
 }
 
@@ -448,7 +517,7 @@ a {
     width: 100%;
     aspect-ratio: 1;
     object-fit: contain;
-    background: #fff;
+    background: var(--pkmn-surface);
     border-radius: var(--bs-border-radius);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -478,7 +547,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: var(--pkmn-surface);
     border-radius: var(--bs-border-radius);
     font-size: 1.5rem;
     color: #adb5bd;
@@ -596,7 +665,7 @@ a {
 }
 
 .set-tile {
-    background-color: #fff;
+    background-color: var(--pkmn-surface);
     border-radius: var(--bs-border-radius);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;

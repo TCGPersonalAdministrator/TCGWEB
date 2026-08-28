@@ -4,6 +4,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        // Aplica el tema guardado ANTES de pintar la página, para no verse
+        // primero en claro y luego "parpadear" a oscuro. Si el usuario nunca
+        // ha tocado el toggle, se usa la preferencia del sistema operativo.
+        (function () {
+            try {
+                var saved = localStorage.getItem("theme");
+                var dark = saved ? saved === "dark" : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+                if (dark) document.documentElement.setAttribute("data-theme", "dark");
+            } catch (e) {}
+        })();
+    </script>
     <title>{% block title %}TCG Personal Administrator{% endblock %}</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +39,9 @@
                 <a class="btn nav-lang-btn" href="{{ url_for('main.set_language', lang=next_ui_lang(current_lang)) }}" title="{{ t('lang.switch_title') }} ({{ ui_lang_name(current_lang) }})">
                     {{ ui_lang_flag(current_lang) }}
                 </a>
+                <button type="button" class="btn nav-theme-btn" id="theme-toggle-btn">
+                    <i class="bi bi-moon-stars-fill" id="theme-toggle-icon" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -62,6 +77,36 @@
             }
             return text;
         };
+    </script>
+    <script>
+        // Toggle de modo claro/oscuro — puramente de cliente (localStorage),
+        // sin recarga: a diferencia del idioma de la interfaz, aquí no hace
+        // falta texto traducido por el servidor, solo CSS.
+        (function () {
+            var btn = document.getElementById("theme-toggle-btn");
+            var icon = document.getElementById("theme-toggle-icon");
+
+            function syncButton() {
+                var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+                icon.className = isDark ? "bi bi-sun-fill" : "bi bi-moon-stars-fill";
+                btn.title = window.t(isDark ? "theme.to_light" : "theme.to_dark");
+            }
+
+            syncButton();
+
+            btn.addEventListener("click", function () {
+                var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+                if (isDark) {
+                    document.documentElement.removeAttribute("data-theme");
+                } else {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                }
+                try {
+                    localStorage.setItem("theme", isDark ? "light" : "dark");
+                } catch (e) {}
+                syncButton();
+            });
+        })();
     </script>
     <script src="{{ url_for('static', filename='js/custom-select.js') }}"></script>
     {% block scripts %}{% endblock %}

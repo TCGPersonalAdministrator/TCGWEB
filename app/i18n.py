@@ -39,6 +39,16 @@ TRANSLATIONS = {
         "en": "Change application language",
         "pt": "Mudar o idioma da aplicação",
     },
+    "theme.to_dark": {
+        "es": "Cambiar a modo oscuro",
+        "en": "Switch to dark mode",
+        "pt": "Mudar para o modo escuro",
+    },
+    "theme.to_light": {
+        "es": "Cambiar a modo claro",
+        "en": "Switch to light mode",
+        "pt": "Mudar para o modo claro",
+    },
 
     # ---------- Inicio ----------
     "home.title": {"es": "Inicio", "en": "Home", "pt": "Início"},
