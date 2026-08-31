@@ -45,6 +45,11 @@ function buildSyncResultMessage(result) {
             `${result.unchanged} ${t("sync.unchanged")}`
         );
         if (result.failed) parts.push(`${result.failed} ${t("sync.failed_count")}`);
+    } else if (result.priced_eur !== undefined) {
+        parts.push(`${result.priced_eur} ${t("sync.priced_eur")}`);
+        if (result.priced_usd) parts.push(`${result.priced_usd} ${t("sync.priced_usd")}`);
+        if (result.no_price) parts.push(`${result.no_price} ${t("sync.no_price")}`);
+        if (result.failed) parts.push(`${result.failed} ${t("sync.failed_count")}`);
     }
     let msg = t("sync.completed") + parts.join(", ");
     if (result.duration_ms !== undefined) msg += t("sync.duration_prefix") + formatDuration(result.duration_ms) + ".";

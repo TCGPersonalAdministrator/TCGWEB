@@ -229,10 +229,20 @@ function initCollectionView() {
     function openCardModal(tile) {
         currentTile = tile;
         titleEl.textContent = tile.dataset.name;
+        const priceSymbol = tile.dataset.priceCurrency === "EUR" ? "€" : "$";
+        const cantidad = parseInt(tile.dataset.cantidad, 10) || 1;
+        const unitPrice = parseFloat(tile.dataset.price);
+        // Con más de 1 copia, el valor mostrado es el total (precio unitario x
+        // cantidad) — el unitario se deja al lado entre paréntesis para que no
+        // parezca un error de cálculo.
+        const priceHtml = tile.dataset.price
+            ? `<p class="text-muted small mb-1">${t("modal.price")} <strong>${(unitPrice * cantidad).toFixed(2)} ${priceSymbol}</strong>${cantidad > 1 ? ` <span class="text-muted">(${unitPrice.toFixed(2)} ${priceSymbol} × ${cantidad})</span>` : ""}</p>`
+            : "";
         bodyEl.innerHTML = `
             <img src="${tile.dataset.image}" class="card-modal-img" alt="${tile.dataset.name}">
             <p class="text-muted mb-1 mt-2">${tile.dataset.set}</p>
             ${tile.dataset.rarity ? `<p class="text-muted small">${tile.dataset.rarity}</p>` : ""}
+            ${priceHtml}
             <p class="d-flex align-items-center justify-content-center gap-2">${t("modal.quantity")} <strong>${tile.dataset.cantidad}</strong> ${langFlagHtml(tile.dataset.idioma, "flag-icon")}</p>
             <button type="button" class="btn btn-outline-danger btn-delete-card" data-id="${tile.dataset.id}">
                 <i class="bi bi-trash3-fill"></i> ${t("modal.delete_from_collection")}

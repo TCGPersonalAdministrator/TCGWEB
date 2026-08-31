@@ -1,13 +1,18 @@
 {% extends "base.html" %}
-{% from "_macros.html" import lang_flag %}
+{% from "_macros.html" import lang_flag, sync_overlay %}
 
 {% block title %}{{ t('collection.title') }} · TCG Personal Administrator{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h1 class="mb-0">{{ t('collection.title') }}</h1>
-    <a href="{{ url_for('collection.add') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> {{ t('collection.add_button') }}</a>
+    <div class="d-flex flex-wrap gap-2">
+        <button id="btn-refresh-prices" type="button" class="btn btn-outline-primary"><i class="bi bi-cash-coin"></i> {{ t('collection.refresh_prices') }}</button>
+        <a href="{{ url_for('collection.add') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> {{ t('collection.add_button') }}</a>
+    </div>
 </div>
+
+<div id="sync-result-banner"></div>
 
 <form method="get" class="mb-4 d-flex flex-wrap gap-3">
     <div style="max-width: 260px; width: 100%;">
@@ -43,12 +48,20 @@
     <span class="progress-label">{{ pct }}%</span>
 </div>
 <p class="text-muted" id="collection-count">{{ t('collection.count_one') if cards | length == 1 else t('collection.count_other', n=cards | length) }}</p>
+{% if priced_count %}
+<p class="collection-value">
+    {{ t('collection.total_value_intro') }}
+    <strong>{{ "%.2f"|format(total_value_eur) }} €</strong>
+    {% if total_value_usd %}<span class="text-muted small">+ {{ "%.2f"|format(total_value_usd) }} $ ({{ t('collection.value_usd_note') }})</span>{% endif %}
+</p>
+{% endif %}
 {% endif %}
 <div class="card-grid collection-grid" id="collection-grid">
     {% for c in cards %}
     <div class="card-tile" data-id="{{ c.id }}" data-name="{{ c.name }}" data-set="{{ c.set_name }}"
          data-rarity="{{ c.rarity or '' }}" data-cantidad="{{ c.cantidad }}" data-idioma="{{ c.idioma }}"
-         data-image="{{ tcgapi_base_url }}{{ c.image_url }}">
+         data-image="{{ tcgapi_base_url }}{{ c.image_url }}"
+         data-price="{{ c.price or '' }}" data-price-currency="{{ c.price_currency or '' }}">
         {% if c.image_url %}
         <img src="{{ tcgapi_base_url }}{{ c.image_url }}" alt="{{ c.name }}" loading="lazy">
         {% else %}
@@ -60,6 +73,9 @@
             <span class="card-tile-qty">x{{ c.cantidad }}</span>
             {% endif %}
         </div>
+        {% if c.price %}
+        <span class="card-tile-price">{{ "%.2f"|format(c.price) }} {{ "€" if c.price_currency == "EUR" else "$" }}</span>
+        {% endif %}
         <div class="card-tile-info">
             <div class="card-tile-name">{{ c.name }}</div>
             <div class="card-tile-set text-muted small">{{ c.set_name }}</div>
@@ -82,8 +98,14 @@
         </div>
     </div>
 </div>
+
+{{ sync_overlay() }}
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/sync.js') }}"></script>
 <script src="{{ url_for('static', filename='js/collection.js') }}"></script>
+<script>
+    initSyncButton("btn-refresh-prices", "{{ url_for('collection.prices_refresh_start') }}", () => window.location.reload());
+</script>
 {% endblock %}

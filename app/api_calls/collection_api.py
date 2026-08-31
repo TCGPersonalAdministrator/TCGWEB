@@ -2,6 +2,7 @@ import requests
 from flask import current_app
 
 from app.api_calls.lang_sets_api import list_languages as list_tcgdex_languages
+from app.api_calls.sync_api import start_sync
 
 
 def list_all_languages() -> list[dict]:
@@ -71,3 +72,9 @@ def delete_owned_card(card_row_id: int) -> tuple[dict, int]:
         f"{current_app.config['TCGAPI_BASE_URL']}/owned/cards/{card_row_id}", timeout=10
     )
     return response.json(), response.status_code
+
+
+def start_refresh_prices() -> tuple[dict, int]:
+    """Arranca en TCGAPI el refresco de precios (raw, sin gradear) de toda la
+    colección personal — botón "Recargar precios" en "Mi colección"."""
+    return start_sync("/owned/prices/refresh")

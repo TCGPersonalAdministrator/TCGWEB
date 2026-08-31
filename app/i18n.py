@@ -138,8 +138,24 @@ TRANSLATIONS = {
         "en": "You haven't registered any card yet.",
         "pt": "Ainda não tens nenhuma carta registada.",
     },
+    "collection.refresh_prices": {
+        "es": "Recargar precios",
+        "en": "Refresh prices",
+        "pt": "Atualizar preços",
+    },
+    "collection.total_value_intro": {
+        "es": "Valor total de la colección:",
+        "en": "Total collection value:",
+        "pt": "Valor total da coleção:",
+    },
+    "collection.value_usd_note": {
+        "es": "sin cotización en €",
+        "en": "no € price found",
+        "pt": "sem cotação em €",
+    },
     "card.delete": {"es": "Eliminar", "en": "Delete", "pt": "Eliminar"},
     "modal.quantity": {"es": "Cantidad:", "en": "Quantity:", "pt": "Quantidade:"},
+    "modal.price": {"es": "Valor:", "en": "Value:", "pt": "Valor:"},
     "modal.delete_from_collection": {
         "es": "Eliminar de la colección",
         "en": "Remove from collection",
@@ -340,6 +356,9 @@ TRANSLATIONS = {
     "sync.updated_count": {"es": "actualizados", "en": "updated", "pt": "atualizados"},
     "sync.unchanged": {"es": "sin cambios", "en": "unchanged", "pt": "sem alterações"},
     "sync.failed_count": {"es": "fallidos", "en": "failed", "pt": "falhados"},
+    "sync.priced_eur": {"es": "con precio en €", "en": "priced in €", "pt": "com preço em €"},
+    "sync.priced_usd": {"es": "con precio en $", "en": "priced in $", "pt": "com preço em $"},
+    "sync.no_price": {"es": "sin cotización", "en": "with no price found", "pt": "sem cotação"},
     "sync.duration_prefix": {"es": " en ", "en": " in ", "pt": " em "},
     "sync.failed_pages": {
         "es": " Páginas que fallaron y se saltaron: {pages} (vuelve a sincronizar para reintentarlas).",

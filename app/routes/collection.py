@@ -8,6 +8,7 @@ from app.api_calls.collection_api import (
     list_owned_sets,
     list_pokemon_cards,
     lookup_cards_by_code,
+    start_refresh_prices,
 )
 from app.api_calls.lang_sets_api import list_lang_sets
 from app.api_calls.pokedex_api import search_pokedex
@@ -30,6 +31,13 @@ def index():
     # pokemontcg.io, resto vía tcgdex.dev).
     set_totals = {(c["idioma"], c["set_id"]): c["set_total"] for c in cards}
 
+    # Valor total = precio unitario x cantidad, sumado por moneda por separado
+    # (Cardmarket en EUR, fallback TCGPlayer en USD si esa carta no tenía
+    # cotización en Cardmarket) — nunca se mezclan ambas en una sola cifra.
+    total_value_eur = sum(c["price"] * c["cantidad"] for c in cards if c.get("price_currency") == "EUR")
+    total_value_usd = sum(c["price"] * c["cantidad"] for c in cards if c.get("price_currency") == "USD")
+    priced_count = sum(1 for c in cards if c.get("price"))
+
     return render_template(
         "collection/index.html",
         cards=cards,
@@ -39,7 +47,16 @@ def index():
         selected_set=set_id,
         owned_count=len(cards),
         total_count=sum(set_totals.values()),
+        total_value_eur=total_value_eur,
+        total_value_usd=total_value_usd,
+        priced_count=priced_count,
     )
+
+
+@collection_bp.route("/prices/refresh", methods=["POST"])
+def prices_refresh_start():
+    body, status_code = start_refresh_prices()
+    return jsonify(body), status_code
 
 
 @collection_bp.route("/add/", methods=["GET"])
