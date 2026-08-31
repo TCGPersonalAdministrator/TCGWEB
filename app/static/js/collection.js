@@ -238,10 +238,13 @@ function initCollectionView() {
         const priceHtml = tile.dataset.price
             ? `<p class="text-muted small mb-1">${t("modal.price")} <strong>${(unitPrice * cantidad).toFixed(2)} ${priceSymbol}</strong>${cantidad > 1 ? ` <span class="text-muted">(${unitPrice.toFixed(2)} ${priceSymbol} × ${cantidad})</span>` : ""}</p>`
             : "";
+        // Rareza y tipo comparten línea (separados por "·") cuando hay los dos,
+        // para no alargar el modal con una línea por cada dato secundario.
+        const rarityType = [tile.dataset.rarity, tile.dataset.types].filter(Boolean).join(" · ");
         bodyEl.innerHTML = `
             <img src="${tile.dataset.image}" class="card-modal-img" alt="${tile.dataset.name}">
             <p class="text-muted mb-1 mt-2">${tile.dataset.set}</p>
-            ${tile.dataset.rarity ? `<p class="text-muted small">${tile.dataset.rarity}</p>` : ""}
+            ${rarityType ? `<p class="text-muted small">${rarityType}</p>` : ""}
             ${priceHtml}
             <p class="d-flex align-items-center justify-content-center gap-2">${t("modal.quantity")} <strong>${tile.dataset.cantidad}</strong> ${langFlagHtml(tile.dataset.idioma, "flag-icon")}</p>
             <button type="button" class="btn btn-outline-danger btn-delete-card" data-id="${tile.dataset.id}">

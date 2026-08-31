@@ -121,6 +121,29 @@ TRANSLATIONS = {
     "collection.filter_lang": {"es": "Filtrar por idioma", "en": "Filter by language", "pt": "Filtrar por idioma"},
     "collection.filter_set": {"es": "Filtrar por set", "en": "Filter by set", "pt": "Filtrar por set"},
     "collection.filter_all": {"es": "Todos", "en": "All", "pt": "Todos"},
+    "collection.sort_by": {"es": "Ordenar por", "en": "Sort by", "pt": "Ordenar por"},
+    "collection.sort_default": {
+        "es": "Recién añadidas primero",
+        "en": "Recently added first",
+        "pt": "Adicionadas recentemente primeiro",
+    },
+    "collection.sort_name": {"es": "Nombre (A-Z)", "en": "Name (A-Z)", "pt": "Nome (A-Z)"},
+    "collection.sort_dex": {
+        "es": "Número de Pokédex",
+        "en": "Pokédex number",
+        "pt": "Número da Pokédex",
+    },
+    "collection.sort_value": {
+        "es": "Valor (mayor a menor)",
+        "en": "Value (highest first)",
+        "pt": "Valor (maior primeiro)",
+    },
+    "collection.sort_type": {"es": "Tipo", "en": "Type", "pt": "Tipo"},
+    "collection.sort_quantity": {
+        "es": "Cantidad (más copias primero)",
+        "en": "Quantity (most copies first)",
+        "pt": "Quantidade (mais cópias primeiro)",
+    },
     "collection.progress_intro": {
         "es": "Cartas conseguidas de los sets en los que ya tienes alguna carta —",
         "en": "Cards obtained from the sets you already have a card in —",

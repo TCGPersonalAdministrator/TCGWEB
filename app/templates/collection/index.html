@@ -33,6 +33,17 @@
             {% endfor %}
         </select>
     </div>
+    <div style="max-width: 260px; width: 100%;">
+        <label for="sort-filter" class="form-label">{{ t('collection.sort_by') }}</label>
+        <select id="sort-filter" name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="" {{ "selected" if not selected_sort else "" }}>{{ t('collection.sort_default') }}</option>
+            <option value="name" {{ "selected" if selected_sort == "name" else "" }}>{{ t('collection.sort_name') }}</option>
+            <option value="dex" {{ "selected" if selected_sort == "dex" else "" }}>{{ t('collection.sort_dex') }}</option>
+            <option value="value" {{ "selected" if selected_sort == "value" else "" }}>{{ t('collection.sort_value') }}</option>
+            <option value="type" {{ "selected" if selected_sort == "type" else "" }}>{{ t('collection.sort_type') }}</option>
+            <option value="quantity" {{ "selected" if selected_sort == "quantity" else "" }}>{{ t('collection.sort_quantity') }}</option>
+        </select>
+    </div>
 </form>
 
 {% if not cards %}
@@ -61,7 +72,8 @@
     <div class="card-tile" data-id="{{ c.id }}" data-name="{{ c.name }}" data-set="{{ c.set_name }}"
          data-rarity="{{ c.rarity or '' }}" data-cantidad="{{ c.cantidad }}" data-idioma="{{ c.idioma }}"
          data-image="{{ tcgapi_base_url }}{{ c.image_url }}"
-         data-price="{{ c.price or '' }}" data-price-currency="{{ c.price_currency or '' }}">
+         data-price="{{ c.price or '' }}" data-price-currency="{{ c.price_currency or '' }}"
+         data-types="{{ c.types or '' }}">
         {% if c.image_url %}
         <img src="{{ tcgapi_base_url }}{{ c.image_url }}" alt="{{ c.name }}" loading="lazy">
         {% else %}

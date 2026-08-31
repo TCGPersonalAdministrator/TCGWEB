@@ -16,12 +16,29 @@ from app.api_calls.sets_api import list_sets
 
 collection_bp = Blueprint("collection", __name__, url_prefix="/collection")
 
+# Criterios de ordenación de "Mi colección" — cada uno es (key, reverse).
+# Vacío/desconocido = sin ordenar (se deja el orden que ya trae la API, más
+# recientes primero). "rareza" se descartó a propósito: la cadena de rareza
+# viene en el idioma de cada carta (5 fuentes distintas), así que un orden
+# alfabético no reflejaría un orden real de rareza y sería engañoso.
+SORT_OPTIONS = {
+    "name": (lambda c: (c["name"] or "").lower(), False),
+    "dex": (lambda c: (c.get("dex_number") is None, c.get("dex_number") or 0), False),
+    "value": (lambda c: (c.get("price") is None, -(c.get("price") or 0)), False),
+    "type": (lambda c: (not c.get("types"), (c.get("types") or "").lower()), False),
+    "quantity": (lambda c: -c["cantidad"], False),
+}
+
 
 @collection_bp.route("/", methods=["GET"])
 def index():
     lang = request.args.get("lang", "")
     set_id = request.args.get("set", "")
+    sort = request.args.get("sort", "")
     cards = list_owned_cards(lang or None, set_id or None)
+    if sort in SORT_OPTIONS:
+        key, reverse = SORT_OPTIONS[sort]
+        cards = sorted(cards, key=key, reverse=reverse)
 
     # Progreso = cartas conseguidas frente al total de cartas de los sets en
     # los que ya tienes alguna carta (no el catálogo entero) — cada set solo
@@ -45,6 +62,7 @@ def index():
         sets=list_owned_sets(),
         selected_lang=lang,
         selected_set=set_id,
+        selected_sort=sort,
         owned_count=len(cards),
         total_count=sum(set_totals.values()),
         total_value_eur=total_value_eur,
