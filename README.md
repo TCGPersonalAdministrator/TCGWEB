@@ -42,27 +42,49 @@ Parte web de la aplicación para gestión de colección Pokémon TCG. Escrita en
    ```
    Por defecto arranca en `http://localhost:5000` con `debug=True` y `threaded=True` (necesario: las páginas de sincronización hacen polling en vivo a `/sync-status` mientras la sincronización corre, y con el servidor de desarrollo sin `threaded=True` esas peticiones se bloquean entre sí).
 
-## Base de datos (MariaDB con Docker)
+## Todo con Docker (MariaDB + TCGAPI + TCGWEB)
 
-La base de datos corre en un contenedor Docker de MariaDB, definido en `docker-compose.yml`. **No arranca sola**: hay que levantarla a mano cada vez (no tiene política de reinicio automático, ni al arrancar el contenedor ni al arrancar el PC).
+`docker-compose.yml` (en esta carpeta) orquesta los **3** contenedores de la aplicación: `mariadb`, `tcgapi` (build desde `../TCGAPI/Dockerfile`) y `tcgweb` (build desde `./Dockerfile`, esta misma carpeta). Es el mismo fichero que antes solo tenía MariaDB — se amplió el 2026-09-01 para no depender de VS Code para arrancar cada proyecto a mano; ver nota en `context.md`. **Ninguno arranca solo**: los tres tienen `restart: "no"` a propósito, igual que ya tenía MariaDB — se levantan a mano cuando se quieran usar, nunca automáticamente al arrancar el PC o Docker Desktop.
 
 1. Abrir Docker Desktop (debe estar corriendo el motor de Docker).
 
-2. Levantar el contenedor:
+2. Levantar los tres contenedores:
    ```bash
    docker compose up -d
    ```
+   La primera vez construye las imágenes de `tcgapi`/`tcgweb` (puede tardar un poco); las siguientes reutiliza la imagen ya construida. `tcgapi` espera a que MariaDB esté realmente lista (`healthcheck`) antes de arrancar.
 
-3. Comprobar que está arriba:
+3. Comprobar que están arriba:
    ```bash
    docker compose ps
    ```
+   La web queda en `http://localhost:5000` y la API en `http://localhost:8080` (igual que ejecutándolas a mano).
 
-4. Para pararlo:
+4. Para pararlos:
    ```bash
    docker compose stop
    ```
-   (o `docker compose down` para además eliminar el contenedor; los datos persisten en el volumen `mariadb_data` mientras no se borre el volumen explícitamente).
+   (o `docker compose down` para además eliminar los contenedores; los datos de MariaDB persisten en el volumen `mariadb_data` y las imágenes descargadas de TCGAPI en `../TCGAPI/storage/` mientras no se borren explícitamente).
+
+5. Tras cambiar código de TCGAPI o TCGWEB, hace falta reconstruir la imagen para que el contenedor recoja el cambio:
+   ```bash
+   docker compose up -d --build
+   ```
+
+Una vez levantados la primera vez con `docker compose up -d`, Docker Desktop los agrupa bajo el proyecto **"tcgweb"** en la pestaña *Containers*: desde ahí se pueden arrancar/parar los tres juntos (interruptor del grupo) o cada uno por separado, sin volver a tocar la terminal ni abrir VS Code.
+
+### Solo la base de datos
+
+Si por lo que sea solo se quiere levantar MariaDB (ej. para depurar TCGAPI/TCGWEB a mano desde VS Code, como antes):
+```bash
+docker compose up -d mariadb
+```
+
+### Variables de entorno y secretos en Docker
+
+- `tcgapi` carga `../TCGAPI/.env` dentro del contenedor (incluida `POKEMONTCG_API_KEY`) y solo sobreescribe `DATABASE_URL` para apuntar al host `mariadb` (nombre del servicio en la red interna de Compose) en vez de `localhost`.
+- `tcgweb` carga `.env` (esta carpeta) y sobreescribe `TCGAPI_BASE_URL`/`TCGAPI_PUBLIC_URL`/`HOST`/`PORT` — ver la tabla de variables más abajo, especialmente la diferencia entre `TCGAPI_BASE_URL` y `TCGAPI_PUBLIC_URL`.
+- Ninguno de los dos `.env` se copia dentro de la imagen (excluidos vía `.dockerignore`) — solo se inyectan como variables de entorno del contenedor en tiempo de ejecución.
 
 ### Credenciales / conexión (ej. desde DBeaver)
 
@@ -95,10 +117,13 @@ Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas en ingl
 
 ## Variables de entorno
 
-| Variable          | Descripción                                  | Por defecto              |
-|-------------------|-----------------------------------------------|---------------------------|
-| `SECRET_KEY`      | Clave secreta de Flask (sesiones, CSRF, etc.) | `dev`                     |
-| `TCGAPI_BASE_URL` | URL base de la API (TCGAPI)                   | `http://localhost:8080`   |
+| Variable             | Descripción                                  | Por defecto              |
+|----------------------|-----------------------------------------------|---------------------------|
+| `SECRET_KEY`         | Clave secreta de Flask (sesiones, CSRF, etc.) | `dev`                     |
+| `TCGAPI_BASE_URL`    | URL de TCGAPI que usa **el backend de TCGWEB** (llamadas `requests.*` en `app/api_calls/`). En Docker Compose es `http://tcgapi:8080` (nombre del servicio). | `http://localhost:8080`   |
+| `TCGAPI_PUBLIC_URL`  | URL de TCGAPI que usa **el navegador** para pedir imágenes directamente (`<img src>`). Tiene que ser siempre una URL accesible desde tu PC — en Docker Compose sigue siendo `http://localhost:8080`, NO el nombre del servicio (el navegador no está dentro de la red de Docker). Si no se define, cae en `TCGAPI_BASE_URL`. | `http://localhost:8080`   |
+| `HOST`               | Interfaz en la que escucha el servidor de Flask (`run.py`). En Docker debe ser `0.0.0.0` para que el puerto publicado del contenedor funcione; en local se deja en `127.0.0.1`. | `127.0.0.1`                |
+| `PORT`               | Puerto en el que escucha Flask (`run.py`).    | `5000`                     |
 
 ## Estructura del proyecto
 
@@ -106,6 +131,9 @@ Todas requieren TCGAPI arrancada y MariaDB corriendo; las de sets/cartas en ingl
 TCGWEB/
 ├── run.py              Entrypoint de la aplicación
 ├── requirements.txt
+├── Dockerfile           Imagen Docker de esta app (python:3.14-slim + Flask)
+├── .dockerignore
+├── docker-compose.yml   Orquesta mariadb + tcgapi (../TCGAPI) + tcgweb (esta carpeta)
 └── app/
     ├── __init__.py       App factory (create_app)
     ├── config.py          Configuración

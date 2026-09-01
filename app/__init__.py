@@ -53,8 +53,10 @@ def create_app(config_class: type[Config] = Config) -> Flask:
     def inject_globals():
         # Las imágenes las sirve TCGAPI (puerto distinto al de esta web), así
         # que las plantillas necesitan la URL base para construir <img src>.
+        # Usa TCGAPI_PUBLIC_URL (no TCGAPI_BASE_URL): esta URL la resuelve el
+        # navegador del usuario, no el backend de TCGWEB — ver nota en config.py.
         return {
-            "tcgapi_base_url": app.config["TCGAPI_BASE_URL"],
+            "tcgapi_base_url": app.config["TCGAPI_PUBLIC_URL"],
             "t": t,
             "current_lang": g.lang,
             "ui_languages": SUPPORTED_LANGUAGES,

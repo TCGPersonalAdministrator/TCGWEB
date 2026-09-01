@@ -12,6 +12,54 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  tcgapi:
+    build:
+      context: ../TCGAPI
+    container_name: tcg-api
+    restart: "no"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file:
+      - ../TCGAPI/.env
+    environment:
+      # Dentro de la red de Docker Compose, "mariadb" es el nombre del
+      # servicio de arriba (localhost no serviría — apuntaría al propio
+      # contenedor de tcgapi, no al de la base de datos).
+      DATABASE_URL: "admin:admin1234@tcp(mariadb:3306)/tcg_db?parseTime=true"
+    ports:
+      - "8080:8080"
+    volumes:
+      # Bind mount (no volumen con nombre): reutiliza las imágenes ya
+      # descargadas en disco y las deja visibles/editables desde el host.
+      - ../TCGAPI/storage:/app/storage
+
+  tcgweb:
+    build:
+      context: ../TCGWEB
+    container_name: tcg-web
+    restart: "no"
+    depends_on:
+      - tcgapi
+    env_file:
+      - .env
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "5000"
+      # Backend (Flask -> TCGAPI): nombre del servicio en la red interna.
+      TCGAPI_BASE_URL: "http://tcgapi:8080"
+      # Navegador del usuario -> TCGAPI: debe ser una URL accesible desde el
+      # PC, no desde dentro de la red de Docker (ver nota en app/config.py).
+      TCGAPI_PUBLIC_URL: "http://localhost:8080"
+    ports:
+      - "5000:5000"
 
 volumes:
   mariadb_data:
